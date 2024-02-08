@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { Container, Row, Col, Card, Button, ToggleButton, ToggleButtonGroup } from 'react-bootstrap';
 import DefaultNavbar from './DefaultNavbar';
 import fitness from '../images/fitness.jpg';
@@ -98,25 +98,27 @@ const Home = () => {
           </h2>
         </Row>
 
-        <Row className="m-4">
+        <Row className="m-5 text-center d-flex justify-content-center">
+          <Col md={6} className='align-items-center'>
           <ToggleButtonGroup
             type="radio"
             name="cycle"
             className="mb-2"
           >
-            <ToggleButton value="monthly" onClick={handleMonthly} className="btn btn-primary">Monthly</ToggleButton>
-            <ToggleButton value="annual" onClick={handleAnnually} className="btn btn-primary">Annual</ToggleButton>
+            <ToggleButton value="monthly" onClick={handleMonthly} variant={billingCycle === 'monthly' ? 'dark' : 'secondary'} className='px-5'>Monthly</ToggleButton>
+            <ToggleButton value="annual" onClick={handleAnnually} variant={billingCycle === 'annually' ? 'dark' : 'secondary'} className='px-5'>Annual</ToggleButton>
           </ToggleButtonGroup>
+          </Col>
         </Row>
 
-        <Row className="m-5 align-items-center justify-content-center">
+        <Row className="m-4 align-items-center justify-content-center">
           {pricingData.map((item, index) => (
             <Col key={index} md={index === 1 ? 4 : 3} className="mb-4 justify-content-center">
               <Card className="d-flex flex-column h-100">
                 <Card.Body className="text-center" style={{ padding: index === 1 ? '4rem' : '1.5rem' }}>
-                  <Card.Title style={{ fontSize: '1.8rem', fontWeight: 'bold', textTransform: 'capitalize'}}>{item.title.toLowerCase()}</Card.Title>
+                  <Card.Title style={{ fontSize: '1.8rem', fontWeight: 'bold', textTransform: 'capitalize'}}>{item.title.toUpperCase()}</Card.Title>
                   <Card.Text style={{ fontSize: '1rem'}}>{item.description}</Card.Text>
-                  <Card.Text style={{ fontSize: '1.4rem'}}>{item.price}</Card.Text>
+                  <Card.Text className="mt-2" style={{ fontSize: '1.4rem'}}>{item.price}</Card.Text>
                   <ul>
                     {item.features.map((feature, i) => (
                       <li key={i} style={{ listStyleType: 'none', fontSize: '1.1rem' }}>
@@ -124,7 +126,7 @@ const Home = () => {
                       </li>
                     ))}
                   </ul>
-                  <Button bg="dark" variant="dark" onClick={signup}>Sign Up</Button>
+                  <Button bg="dark" variant="dark" onClick={signup} className='px-5' style={{ marginTop: index === 1 ? '2rem' : '1rem'}}>Sign Up</Button>
                 </Card.Body>
               </Card>
             </Col>

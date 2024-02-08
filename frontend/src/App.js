@@ -1,11 +1,13 @@
 import React from 'react';
-import Home from './components/Home';
+import ReactDOM from 'react-dom';
+import Navigation from './Navigation';
 
 const App = () => {
-  return (
-    <div className="App">
-      <Home />
-    </div>
+  ReactDOM.render(
+    <React.StrictMode>
+      <Navigation />
+    </React.StrictMode>,
+    document.getElementById('root')
   );
 };
 
