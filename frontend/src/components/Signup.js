@@ -21,6 +21,7 @@ const Signup = () => {
                   <Row className="mb-3">
                     <Col>
                       <h5>Why be old-fashioned?</h5>
+                      <h5>Just sign in with:</h5>
                     </Col>
                   </Row>
                   <Row>
@@ -45,7 +46,8 @@ const Signup = () => {
                       {/* <Form.Label>Password</Form.Label> */}
                       <Form.Control type="password" placeholder="password" />
                     </Form.Group>
-                    <Button variant="success" onClick={handleSignup} block>Sign Up</Button>
+                    <h6>By submitting this form, you agree to our terms of service.</h6>
+                    <Button bg="dark" variant="dark" onClick={handleSignup} block className="mt-5">Sign Up</Button>
                   </Form>
                 </Col>
               </Row>
