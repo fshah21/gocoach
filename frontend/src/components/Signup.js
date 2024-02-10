@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Container, Row, Col, Card, Button, Form } from 'react-bootstrap';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Signup = () => {
+    const navigate = useNavigate();
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -33,6 +35,8 @@ const Signup = () => {
           setUsername('');
           setEmail('');
           setPassword('');
+
+          navigate('/userhome');
         } catch (error) {
           // Handle errors, e.g., show an error message to the user
           console.error('Signup failed:', error.message);

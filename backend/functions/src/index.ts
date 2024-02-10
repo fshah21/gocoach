@@ -11,7 +11,7 @@ const app = express();
 // Define the signup route
 app.use(json());
 
-app.use(cors({ origin: true }));
+app.use(cors());
 
 app.use(userRoutes);
 

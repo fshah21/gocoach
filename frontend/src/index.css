@@ -11,3 +11,15 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.sidebar {
+  position: fixed;
+  width: 400px;
+  height: 100%;
+  padding-top: 20px;
+  font-size: 20px;
+}
+
+.main-content {
+  margin-left: 200px; /* Adjust based on the width of your sidebar */
+}
