@@ -1,11 +1,9 @@
 const express = require("express");
-import * as admin from 'firebase-admin';
 import { onRequest } from 'firebase-functions/v2/https';
 import { userRoutes } from './routes/user.routes';
 import cors from "cors";
 import { json } from "body-parser";
 
-admin.initializeApp();
 const app = express();
 
 // Define the signup route
