@@ -6,7 +6,6 @@ import DefaultNavbar from './DefaultNavbar';
 
 const Signup = () => {
     const navigate = useNavigate();
-    const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -23,14 +22,15 @@ const Signup = () => {
 
         try {
           // Make a POST request to your API endpoint
-          const response = await axios.post('http://localhost:5000/gocoachbackend/us-central1/backend/users/signup', {
-            username,
+          const response = await axios.post('http://localhost:5000/gocoachbackend/us-central1/backend/users/login', {
             email,
             password,
           });
+
+          console.log("RESPONSE STATUS", response.status);
     
           // Handle the response from your server, e.g., show a success message
-          console.log('Signup successful:', response.data);
+          console.log('Login successful:', response.data);
     
           // For demonstration purposes, you can clear the form fields
           setUsername('');
@@ -52,7 +52,7 @@ const Signup = () => {
             <Card.Body>
               <Row className="text-center">
                 <Col>
-                  <h2>Create a New Account</h2>
+                  <h2>Log in to your account</h2>
                 </Col>
               </Row>
               <Row className="mt-4">
@@ -73,11 +73,6 @@ const Signup = () => {
                 </Col>
                 <Col xs={7} className="ps-4">
                   <Form>
-                    <Form.Group className="mb-3" controlId="username">
-                      {/* <Form.Label>Username</Form.Label> */}
-                      <Form.Control type="text" placeholder="username" 
-                      value={username} onChange={(e) => setUsername(e.target.value)}/>
-                    </Form.Group>
                     <Form.Group className="mb-3" controlId="email">
                       {/* <Form.Label>Email</Form.Label> */}
                       <Form.Control type="email" placeholder="email" 

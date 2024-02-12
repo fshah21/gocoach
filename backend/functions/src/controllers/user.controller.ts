@@ -33,4 +33,30 @@ export class UserController {
             res.status(500).send(`Error during signup: ${error.message}`);
           }
     }
+
+    static async login(req: Request, res: Response) {
+        try {
+            const { email, password } = req.body;
+        
+            // Check if email and password are provided
+            if (!email || !password) {
+              return res.status(400).json({ error: 'Email and password are required.' });
+            }
+        
+            const userRecord = await admin.auth().getUserByEmail(email);
+            console.log("USER RECORD");
+            console.log(userRecord);
+    
+            if (userRecord.passwordHash === password) {
+              console.log('User signed in:', userRecord.uid, userRecord.email, userRecord.displayName);
+              return res.status(200).send("User logged in");
+            }
+            else {
+              return res.status(500).send(`Incorrect password`)
+            }
+          } catch (error: any) {
+            logger.error(`Error during login: ${error.message}`, { structuredData: true });
+            return res.status(500).send(`Error during login: ${error.message}`);
+          }
+    }
 }
