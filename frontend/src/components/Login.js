@@ -3,22 +3,24 @@ import { Container, Row, Col, Card, Button, Form } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import DefaultNavbar from './DefaultNavbar';
+import { useUserContext } from './UserContext';
 
-const Signup = () => {
+const Login = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const { updateUser } = useUserContext();
 
-    const handleSignup = async () => {
+    const handleLogin = async () => {
         // Handle signup logic here
-        console.log("Sign up clicked");
-        if (!username || !email || !password) {
+        console.log("Login clicked");
+        if (!email || !password) {
           console.error('Please fill in all fields.');
           return;
         }
     
         // Handle signup logic here
-        console.log('Signing up with:', username, email, password);
+        console.log('Signing up with:', email, password);
 
         try {
           // Make a POST request to your API endpoint
@@ -31,13 +33,12 @@ const Signup = () => {
     
           // Handle the response from your server, e.g., show a success message
           console.log('Login successful:', response.data);
-    
+          updateUser(response.data.user_id);    
           // For demonstration purposes, you can clear the form fields
-          setUsername('');
           setEmail('');
           setPassword('');
 
-          navigate('/userhome');
+          navigate('/classbuilder');
         } catch (error) {
           // Handle errors, e.g., show an error message to the user
           console.error('Signup failed:', error.message);
@@ -60,7 +61,7 @@ const Signup = () => {
                   <Row className="mb-3">
                     <Col>
                       <h5>Why be old-fashioned?</h5>
-                      <h5>Just sign in with:</h5>
+                      <h5>Just log in with:</h5>
                     </Col>
                   </Row>
                   <Row>
@@ -84,7 +85,7 @@ const Signup = () => {
                       value={password} onChange={(e) => setPassword(e.target.value)}/>
                     </Form.Group>
                     <h6>By submitting this form, you agree to our terms of service.</h6>
-                    <Button bg="dark" variant="dark" onClick={handleSignup} block className="mt-5">Sign Up</Button>
+                    <Button bg="dark" variant="dark" onClick={handleLogin} block className="mt-5">Log in</Button>
                   </Form>
                 </Col>
               </Row>
@@ -95,4 +96,4 @@ const Signup = () => {
     );
 };
 
-export default Signup;
+export default Login;

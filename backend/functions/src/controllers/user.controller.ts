@@ -31,7 +31,9 @@ export class UserController {
             });
 
   
-            return res.status(200).send(`User signed up successfully!`);
+            return res.status(200).json({
+              user_id: user.uid
+            });
           } catch (error: any) {
             logger.error(`Error during signup: ${error.message}`, { structuredData: true });
             return res.status(500).send(`Error during signup: ${error.message}`);
@@ -53,8 +55,9 @@ export class UserController {
         const user = userCredential.user;
           
         console.log('User signed in:', user.email);
-        return res.status(200).json({ message: 'Logged in' });
-          
+        return res.status(200).json({
+          user_id: user.uid
+        });
           // Handle success or redirect
           // You can redirect or send a success response to the client
         } catch (error: any) {

@@ -1,14 +1,14 @@
 import React from 'react';
 import { Nav } from 'react-bootstrap';
 
-const LeftNavigation = () => {
+const LeftNavigation = (props) => {
   return (
     <Nav className="flex-column bg-light sidebar">
       <Nav.Item>
         <Nav.Link href="/userHome">Dashboard</Nav.Link>
       </Nav.Item>
       <Nav.Item>
-        <Nav.Link href="#about">Class Builder</Nav.Link>
+        <Nav.Link href="/classbuilder">Class Builder</Nav.Link>
       </Nav.Item>
       <Nav.Item>
         <Nav.Link href="#services">Library</Nav.Link>

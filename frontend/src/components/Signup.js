@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Container, Row, Col, Card, Button, Form } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import DefaultNavbar from './DefaultNavbar';
+import { useUserContext } from './UserContext';
 
 const Signup = () => {
     const navigate = useNavigate();
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const { updateUser } = useUserContext();
 
     const handleSignup = async () => {
         // Handle signup logic here
@@ -28,16 +30,15 @@ const Signup = () => {
             email,
             password,
           });
-    
-          // Handle the response from your server, e.g., show a success message
-          console.log('Signup successful:', response.data);
-    
+
+          console.log('Signup successful:', response.data);    
+          updateUser(response.data.user_id);    
           // For demonstration purposes, you can clear the form fields
           setUsername('');
           setEmail('');
           setPassword('');
 
-          navigate('/userhome');
+          navigate('/userhome', { state: { userId: response.data.user_id } });
         } catch (error) {
           // Handle errors, e.g., show an error message to the user
           console.error('Signup failed:', error.message);

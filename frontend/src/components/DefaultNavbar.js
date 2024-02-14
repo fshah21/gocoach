@@ -7,7 +7,7 @@ const DefaultNavbar = () => {
       <Navbar.Brand className="justify-content-start ms-4" href="#home">GoCoach</Navbar.Brand>
       <Nav className="justify-content-end me-4" style={{ width: "100%" }}>
         <Nav.Link href="/signup">Sign Up</Nav.Link>
-        <Nav.Link href="#login">Login</Nav.Link>
+        <Nav.Link href="/login">Login</Nav.Link>
       </Nav>
     </Navbar>
   );
