@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Row, Col, Form, Button } from 'react-bootstrap';
+import { Container, Row, Col, Form, Button, Modal } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
 import DefaultNavbar from './DefaultNavbar';
 import LeftNavigation from './LeftNavigation';
@@ -12,6 +12,14 @@ const ClassBuilder = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [name, setName] = useState('');
   const [duration, setDuration] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [sectionData, setSectionData] = useState({
+    sectionName: '',
+    startTime: '',
+    finishTime: '',
+    displayText: '',
+    coachesNotes: ''
+  });
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -31,6 +39,28 @@ const ClassBuilder = () => {
     console.log('Name:', name);
     console.log('Duration:', duration);
     // Perform additional actions, e.g., save data
+  };
+
+  const handleSectionInputChange = (e) => {
+    setSectionData({
+      ...sectionData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleAddSection = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
+  const handleSaveSection = () => {
+    // Handle saving section data
+    console.log('Section Data:', sectionData);
+    // Add logic to save the section data to your state or perform other actions
+    handleCloseModal();
   };
   
   return (
@@ -54,6 +84,9 @@ const ClassBuilder = () => {
                       </Col>
                       <Col>
                         <h5>Class Duration : </h5>
+                      </Col>
+                      <Col>
+                        <Button type="submit" onClick={handleSubmit} >Save Class</Button>{' '}
                       </Col>
                     </Row>
                     <Row>
@@ -83,10 +116,13 @@ const ClassBuilder = () => {
                             />
                           </Col>
 
+                          <Col>
+                          </Col>
+
                           <Row>
                             <Col sm={{ span: 8, offset: 4 }}>
                               <Button type="submit" onClick={handleSubmit} >Save</Button>{' '}
-                              <Button variant="secondary" onClick={() => console.log('Add Section clicked')}>
+                              <Button variant="secondary" onClick={handleAddSection}>
                                 Add Section
                               </Button>
                             </Col>
@@ -96,6 +132,71 @@ const ClassBuilder = () => {
                 </Col>
             </Row>
         </Container>
+
+        <Modal show={showModal} onHide={handleCloseModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Add Section</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group controlId="sectionName">
+              <Form.Label>Name:</Form.Label>
+              <Form.Control
+                type="text"
+                name="sectionName"
+                value={sectionData.sectionName}
+                onChange={handleSectionInputChange}
+              />
+            </Form.Group>
+            <Form.Group controlId="startTime">
+              <Form.Label>Start Time:</Form.Label>
+              <Form.Control
+                type="number"
+                name="startTime"
+                value={sectionData.startTime}
+                onChange={handleSectionInputChange}
+              />
+            </Form.Group>
+            <Form.Group controlId="finishTime">
+              <Form.Label>Finish Time:</Form.Label>
+              <Form.Control
+                type="number"
+                name="finishTime"
+                value={sectionData.finishTime}
+                onChange={handleSectionInputChange}
+              />
+            </Form.Group>
+            <Form.Group controlId="displayText">
+              <Form.Label>Display Text:</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                name="displayText"
+                value={sectionData.displayText}
+                onChange={handleSectionInputChange}
+              />
+            </Form.Group>
+            <Form.Group controlId="coachesNotes">
+              <Form.Label>Coach's Notes:</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                name="coachesNotes"
+                value={sectionData.coachesNotes}
+                onChange={handleSectionInputChange}
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleSaveSection}>
+            Save Section
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };
