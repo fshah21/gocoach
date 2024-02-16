@@ -1,14 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Navigation from './Navigation';
-import { UserProvider } from './components/UserContext';
+import store from './app/store'
+import { Provider } from 'react-redux'  
 
 const App = () => {
   ReactDOM.render(
     <React.StrictMode>
-      <UserProvider>
+      <Provider store={store}>
         <Navigation />
-      </UserProvider>
+      </Provider>
     </React.StrictMode>,
     document.getElementById('root')
   );

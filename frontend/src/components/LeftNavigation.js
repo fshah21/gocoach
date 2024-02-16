@@ -1,23 +1,24 @@
 import React from 'react';
 import { Nav } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 const LeftNavigation = (props) => {
   return (
     <Nav className="flex-column bg-light sidebar">
       <Nav.Item>
-        <Nav.Link href="/userHome">Dashboard</Nav.Link>
+        <Link to="/userhome" className="nav-link">Dashboard</Link>
       </Nav.Item>
       <Nav.Item>
-        <Nav.Link href="/classbuilder">Class Builder</Nav.Link>
+        <Link to="/classbuilder" className="nav-link">Class Builder</Link>
       </Nav.Item>
       <Nav.Item>
-        <Nav.Link href="#services">Library</Nav.Link>
+        <Link to="/library" className="nav-link">Library</Link>
       </Nav.Item>
       <Nav.Item>
-        <Nav.Link href="#contact">Account</Nav.Link>
+        <Link to="/account" className="nav-link">Account</Link>
       </Nav.Item>
       <Nav.Item>
-        <Nav.Link href="#contact">Settings</Nav.Link>
+        <Link to="/settings" className="nav-link">Settings</Link>
       </Nav.Item>
     </Nav>
   );

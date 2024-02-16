@@ -3,13 +3,14 @@ import { Container, Row, Col, Card, Button, Form } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import DefaultNavbar from './DefaultNavbar';
-import { useUserContext } from './UserContext';
+import { useDispatch } from 'react-redux';
+import { setUserId } from './actions';
 
 const Login = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { updateUser } = useUserContext();
+    const dispatch = useDispatch()
 
     const handleLogin = async () => {
         // Handle signup logic here
@@ -33,7 +34,7 @@ const Login = () => {
     
           // Handle the response from your server, e.g., show a success message
           console.log('Login successful:', response.data);
-          updateUser(response.data.user_id);    
+          dispatch(setUserId(response.data.user_id));
           // For demonstration purposes, you can clear the form fields
           setEmail('');
           setPassword('');

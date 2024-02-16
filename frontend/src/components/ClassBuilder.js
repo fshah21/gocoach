@@ -2,23 +2,11 @@ import React, { useEffect } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import DefaultNavbar from './DefaultNavbar';
 import LeftNavigation from './LeftNavigation';
-import { useUserContext } from './UserContext';
+import { useSelector } from 'react-redux';
 
 const ClassBuilder = () => {
-  const { userId } = useUserContext();
-
-  useEffect(() => {
-    // This code block will run whenever userId changes
-    console.log('ClassBuilder component re-rendered with userId:', userId);
-
-    // Any logic you want to perform when userId changes can go here
-
-    // Cleanup function (optional)
-    return () => {
-      console.log('Cleanup logic if needed');
-    };
-  }, [userId]); 
-
+  const userId = useSelector(state => state.user.userId);
+  
   return (
     <>
         <DefaultNavbar/>
