@@ -22,6 +22,7 @@ const ClassBuilder = () => {
     displayText: '',
     coachesNotes: ''
   });
+  const [sections, setSections] = useState([]);
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -53,6 +54,7 @@ const ClassBuilder = () => {
     const class_id = response.data.class_id;
     console.log("CLASS ID", class_id);
     setClassId(class_id);
+    // handleGetSections();
   };
 
   const handleSectionInputChange = (e) => {
@@ -90,6 +92,14 @@ const ClassBuilder = () => {
     // Add logic to save the section data to your state or perform other actions
     handleCloseModal();
   };
+
+  const handleGetSections = async () => {
+    console.log('Get sections');
+
+    const response = await axios.get("http://localhost:5000/gocoachbackend/us-central1/backend/users/" + userId + "/classes/getAllSectionsInClass/" + classId);
+
+    console.log("RESPONSE DATA FOR GET SECTION", response.data);
+  }
   
   return (
     <>
@@ -146,15 +156,14 @@ const ClassBuilder = () => {
 
                           <Col>
                           </Col>
-
-                          <Row>
-                            <Col sm={{ span: 8, offset: 4 }}>
-                              <Button type="submit" onClick={handleSubmit} >Save</Button>{' '}
-                              <Button variant="secondary" onClick={handleAddSection}>
-                                Add Section
-                              </Button>
-                            </Col>
-                          </Row>
+                    </Row>
+                    <Row>
+                      <Col sm={{ span: 8, offset: 4 }} className='mt-5'>
+                        <Button type="submit" onClick={handleSubmit} >Save</Button>{' '}
+                        <Button variant="secondary" onClick={handleAddSection}>
+                          Add Section
+                        </Button>
+                      </Col>
                     </Row>
                   </Container>
                 </Col>
