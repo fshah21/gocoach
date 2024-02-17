@@ -5,6 +5,7 @@ import DefaultNavbar from './DefaultNavbar';
 import LeftNavigation from './LeftNavigation';
 import { useSelector } from 'react-redux';
 import 'react-datepicker/dist/react-datepicker.css';
+import axios from "axios";
 
 const ClassBuilder = () => {
   const userId = useSelector(state => state.user.userId);
@@ -13,6 +14,7 @@ const ClassBuilder = () => {
   const [name, setName] = useState('');
   const [duration, setDuration] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const [classId, setClassId] = useState('');
   const [sectionData, setSectionData] = useState({
     sectionName: '',
     startTime: '',
@@ -33,12 +35,24 @@ const ClassBuilder = () => {
     setDuration(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('Date:', selectedDate);
     console.log('Name:', name);
     console.log('Duration:', duration);
     // Perform additional actions, e.g., save data
+
+    const response = await axios.post("http://localhost:5000/gocoachbackend/us-central1/backend/classes/createClass", {
+      user_id: userId,
+      class_name: name,
+      class_duration: duration,
+      class_date: selectedDate
+    })
+
+    console.log("RESPONSE", response.data);
+    const class_id = response.data.class_id;
+    console.log("CLASS ID", class_id);
+    setClassId(class_id);
   };
 
   const handleSectionInputChange = (e) => {
@@ -56,9 +70,23 @@ const ClassBuilder = () => {
     setShowModal(false);
   };
 
-  const handleSaveSection = () => {
+  const handleSaveSection = async () => {
     // Handle saving section data
     console.log('Section Data:', sectionData);
+
+    const response = await axios.post("http://localhost:5000/gocoachbackend/us-central1/backend/classes/addSection/" + classId, {
+      user_id: userId,
+      section_name: sectionData.sectionName,
+      section_start_time: sectionData.startTime,
+      section_finish_time: sectionData.finishTime,
+      section_display_text: sectionData.displayText,
+      section_coach_notes: sectionData.coachesNotes
+    })
+
+    console.log("RESPONSE DATA FOR SECTION", response.data);
+
+    console.log("SECTIONS", response.data.section_id);
+
     // Add logic to save the section data to your state or perform other actions
     handleCloseModal();
   };
