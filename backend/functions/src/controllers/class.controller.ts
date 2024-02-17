@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { setDoc, doc, collection, Timestamp } from "firebase/firestore"; 
+import { setDoc, doc, collection, Timestamp, getDocs, query } from "firebase/firestore"; 
 
 const firebaseConfig = {
   apiKey: "AIzaSyDBR06evXooU_y85weKKega5SHeC5LJDOY",
@@ -75,6 +75,31 @@ export class ClassController {
         } catch (error: any) {
             console.error(`Error adding section: ${error.message}`);
             return res.status(500).send(`Error adding section: ${error.message}`);
+        }
+    }
+
+    static async getAllSectionsInClass(req: Request, res: Response) {
+        try {
+            const { user_id, class_id } = req.params;
+        
+            // Query for all sections in the specified class
+            const sectionsQuery = query(
+              collection(db, 'users', user_id, 'classes', class_id, 'sections')
+            );
+        
+            // Retrieve the sections
+            const sectionsSnapshot = await getDocs(sectionsQuery);
+        
+            // Extract section data
+            const sectionsData = sectionsSnapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+        
+            return res.status(200).json(sectionsData);
+        } catch (error: any) {
+            console.error(`Error getting sections: ${error.message}`);
+            return res.status(500).send(`Error getting sections: ${error.message}`);
         }
     }
 
