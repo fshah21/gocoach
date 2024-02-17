@@ -1,6 +1,7 @@
 const express = require("express");
 import { onRequest } from 'firebase-functions/v2/https';
 import { userRoutes } from './routes/user.routes';
+import { classRoutes } from './routes/class.routes';
 import cors from "cors";
 import { json } from "body-parser";
 
@@ -12,6 +13,7 @@ app.use(json());
 app.use(cors());
 
 app.use(userRoutes);
+app.use(classRoutes);
 
 // Define other routes as needed...
 
