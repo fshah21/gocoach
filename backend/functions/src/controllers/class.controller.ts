@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { setDoc, doc, collection, Timestamp, getDocs, query } from "firebase/firestore"; 
+import { setDoc, doc, collection, Timestamp, getDocs, query, deleteDoc, updateDoc } from "firebase/firestore"; 
 
 const firebaseConfig = {
   apiKey: "AIzaSyDBR06evXooU_y85weKKega5SHeC5LJDOY",
@@ -12,11 +12,13 @@ const firebaseConfig = {
   appId: "1:724440528273:web:fe9c1027786f33f33d9630"
 };
 
-// interface Section {
-//     name: string;
-//     startTime: string;
-//     finishTime: string;
-// }
+interface SectionUpdate {
+    coachNotes?: string;
+    displayText?: string;
+    finishTime?: number;
+    name?: string;
+    startTime?: number;
+}
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -101,6 +103,48 @@ export class ClassController {
             console.error(`Error getting sections: ${error.message}`);
             return res.status(500).send(`Error getting sections: ${error.message}`);
         }
+    }
+
+    static async deleteSection(req: Request, res: Response) {
+        try {
+            const { section_id } = req.params;
+            const { user_id, class_id } = req.body;
+        
+            const sectionRef = doc(db, 'users', user_id, 'classes', class_id, 'sections', section_id);
+            await deleteDoc(sectionRef);
+
+            return res.status(204).send();
+        } catch (error: any) {
+            console.error(`Error getting sections: ${error.message}`);
+            return res.status(500).send(`Error getting sections: ${error.message}`);
+        }
+    }
+
+    static async editSection(req: Request, res: Response) {
+        try {
+            const { section_id } = req.params;
+            const { user_id, class_id, coach_notes, display_text, finish_time, name, start_time } = req.body;
+          
+            const sectionRef = doc(db, 'users', user_id, 'classes', class_id, 'sections', section_id);
+                
+            // Create an object with the fields to update
+            const updatedData: SectionUpdate = {};
+
+            // Add fields to updatedData only if they are truthy
+            if (coach_notes) updatedData.coachNotes = coach_notes;
+            if (display_text) updatedData.displayText = display_text;
+            if (finish_time) updatedData.finishTime = finish_time;
+            if (name) updatedData.name = name;
+            if (start_time) updatedData.startTime = start_time;
+        
+            // Use updateDoc to edit the section data
+            await updateDoc(sectionRef, updatedData as { [x: string]: any; });
+        
+            return res.status(204).send();
+          } catch (error: any) {
+            console.error(`Error editing section: ${error.message}`);
+            return res.status(500).send(`Error editing section: ${error.message}`);
+          }
     }
 
 }
