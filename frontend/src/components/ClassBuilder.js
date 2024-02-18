@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Row, Col, Form, Button, Modal } from 'react-bootstrap';
+import { Container, Row, Col, Form, Button, Modal, Card } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
 import DefaultNavbar from './DefaultNavbar';
 import LeftNavigation from './LeftNavigation';
@@ -54,7 +54,7 @@ const ClassBuilder = () => {
     const class_id = response.data.class_id;
     console.log("CLASS ID", class_id);
     setClassId(class_id);
-    // handleGetSections();
+    handleGetSections(class_id);
   };
 
   const handleSectionInputChange = (e) => {
@@ -91,14 +91,16 @@ const ClassBuilder = () => {
 
     // Add logic to save the section data to your state or perform other actions
     handleCloseModal();
+    handleGetSections(classId);
   };
 
-  const handleGetSections = async () => {
+  const handleGetSections = async (classId) => {
     console.log('Get sections');
 
     const response = await axios.get("http://localhost:5000/gocoachbackend/us-central1/backend/users/" + userId + "/classes/getAllSectionsInClass/" + classId);
 
     console.log("RESPONSE DATA FOR GET SECTION", response.data);
+    setSections(response.data);
   }
   
   return (
@@ -156,6 +158,24 @@ const ClassBuilder = () => {
 
                           <Col>
                           </Col>
+                    </Row>
+                    <Row className="mt-5">
+                      {sections.map((section, index) => (
+                          <Card key={index} className="mt-3">
+                            <Card.Body>
+                              <Card.Title>{section.name}</Card.Title>
+                              <Card.Text>
+                                <strong>Start Time:</strong> {section.startTime}
+                                <br />
+                                <strong>Finish Time:</strong> {section.finishTime}
+                                <br />
+                                <strong>Display Text:</strong> {section.displayText}
+                                <br />
+                                <strong>Coach's Notes:</strong> {section.coachNotes}
+                              </Card.Text>
+                            </Card.Body>
+                          </Card>
+                      ))}
                     </Row>
                     <Row>
                       <Col sm={{ span: 8, offset: 4 }} className='mt-5'>
