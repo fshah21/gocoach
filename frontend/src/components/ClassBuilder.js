@@ -121,10 +121,27 @@ const ClassBuilder = () => {
     setEditIndex(-1);
   };
   
-  const handleDeleteSection = (index) => {
+  const handleDeleteSection = async (index) => {
+    const sectionToDelete = sections[index];
+    console.log('Deleted Section Data:', sectionToDelete);
     const updatedSections = [...sections];
     updatedSections.splice(index, 1);
     setSections(updatedSections);
+
+    try {
+      const response = await axios.post(
+        `http://localhost:5000/gocoachbackend/us-central1/backend/sections/deleteSection/${sectionToDelete.id}`,
+        {
+          user_id: userId,
+          class_id: classId,
+        }
+      );
+      console.log('DELETE Section Response:', response.data);
+      // Add logic to update state or perform other actions after successful deletion
+    } catch (error) {
+      console.error('Error deleting section:', error.message);
+      // Handle error (display an error message, etc.)
+    }
   };
   
   return (
