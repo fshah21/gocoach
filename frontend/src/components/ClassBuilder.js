@@ -23,6 +23,8 @@ const ClassBuilder = () => {
     coachesNotes: ''
   });
   const [sections, setSections] = useState([]);
+  const [editIndex, setEditIndex] = useState(-1);
+  const [editingSection, setEditingSection] = useState({ /* Fields for editing */ });
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -102,6 +104,28 @@ const ClassBuilder = () => {
     console.log("RESPONSE DATA FOR GET SECTION", response.data);
     setSections(response.data);
   }
+
+  const handleEditSection = (index) => {
+    setEditIndex(index);
+    setEditingSection({ ...sections[index] });
+  };
+  
+  const handleEditField = (field, value) => {
+    setEditingSection({ ...editingSection, [field]: value });
+  };
+  
+  const handleSaveEdit = (index) => {
+    const updatedSections = [...sections];
+    updatedSections[index] = { ...editingSection };
+    setSections(updatedSections);
+    setEditIndex(-1);
+  };
+  
+  const handleDeleteSection = (index) => {
+    const updatedSections = [...sections];
+    updatedSections.splice(index, 1);
+    setSections(updatedSections);
+  };
   
   return (
     <>
@@ -161,25 +185,87 @@ const ClassBuilder = () => {
                     </Row>
                     <Row className="mt-5">
                       {sections.map((section, index) => (
-                          <Card key={index} className="mt-3">
-                            <Card.Body>
+                        <Card key={index} className="mt-3">
+                          <Card.Body>
+                            <div className="d-flex justify-content-between align-items-center">
                               <Card.Title>{section.name}</Card.Title>
-                              <Card.Text>
-                                <strong>Start Time:</strong> {section.startTime}
-                                <br />
-                                <strong>Finish Time:</strong> {section.finishTime}
-                                <br />
-                                <strong>Display Text:</strong> {section.displayText}
-                                <br />
-                                <strong>Coach's Notes:</strong> {section.coachNotes}
-                              </Card.Text>
-                            </Card.Body>
-                          </Card>
+                              <div>
+                                <Button variant="outline-primary" className="mr-2" onClick={() => handleEditSection(index)}>
+                                  Edit
+                                </Button>
+                                <Button variant="outline-danger" onClick={() => handleDeleteSection(index)}>
+                                  Delete
+                                </Button>
+                              </div>
+                            </div>
+                            <Card.Text>
+                            <div className="editable-field">
+                                <strong>Name:</strong> {editIndex === index ? (
+                                  <Form.Control
+                                    type="text"
+                                    value={editingSection.name}
+                                    onChange={(e) => handleEditField('name', e.target.value)}
+                                  />
+                                ) : (
+                                  section.name
+                                )}
+                              </div>
+                              <div className="editable-field">
+                                <strong>Start Time:</strong> {editIndex === index ? (
+                                  <Form.Control
+                                    type="text"
+                                    value={editingSection.startTime}
+                                    onChange={(e) => handleEditField('startTime', e.target.value)}
+                                  />
+                                ) : (
+                                  section.startTime
+                                )}
+                              </div>
+                              <div className="editable-field">
+                                <strong>Finish Time:</strong> {editIndex === index ? (
+                                  <Form.Control
+                                    type="text"
+                                    value={editingSection.finishTime}
+                                    onChange={(e) => handleEditField('startTime', e.target.value)}
+                                  />
+                                ) : (
+                                  section.finishTime
+                                )}
+                              </div>
+                              <div className="editable-field">
+                                <strong>Display Text:</strong> {editIndex === index ? (
+                                  <Form.Control
+                                    type="text"
+                                    value={editingSection.displayText}
+                                    onChange={(e) => handleEditField('startTime', e.target.value)}
+                                  />
+                                ) : (
+                                  section.displayText
+                                )}
+                              </div>
+                              <div className="editable-field">
+                                <strong>Display Text:</strong> {editIndex === index ? (
+                                  <Form.Control
+                                    type="text"
+                                    value={editingSection.coachNotes}
+                                    onChange={(e) => handleEditField('startTime', e.target.value)}
+                                  />
+                                ) : (
+                                  section.coachNotes
+                                )}
+                              </div>
+                            </Card.Text>
+                            {editIndex === index && (
+                              <Button variant="primary" onClick={() => handleSaveEdit(index)} className="mt-2">
+                                Save
+                              </Button>
+                            )}
+                          </Card.Body>
+                        </Card>
                       ))}
                     </Row>
                     <Row>
                       <Col sm={{ span: 8, offset: 4 }} className='mt-5'>
-                        <Button type="submit" onClick={handleSubmit} >Save</Button>{' '}
                         <Button variant="secondary" onClick={handleAddSection}>
                           Add Section
                         </Button>
