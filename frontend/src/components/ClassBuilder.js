@@ -24,7 +24,13 @@ const ClassBuilder = () => {
   });
   const [sections, setSections] = useState([]);
   const [editIndex, setEditIndex] = useState(-1);
-  const [editingSection, setEditingSection] = useState({ /* Fields for editing */ });
+  const [editingSection, setEditingSection] = useState({ 
+    name: '',
+    startTime: '',
+    finishTime: '',
+    displayText: '',
+    coachesNotes: ''
+  });
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -114,11 +120,33 @@ const ClassBuilder = () => {
     setEditingSection({ ...editingSection, [field]: value });
   };
   
-  const handleSaveEdit = (index) => {
+  const handleSaveEdit = async (index) => {
+    const sectionToDelete = sections[index];
+    console.log('Deleted Section Data:', sectionToDelete);
     const updatedSections = [...sections];
     updatedSections[index] = { ...editingSection };
     setSections(updatedSections);
     setEditIndex(-1);
+
+    try {
+      const response = await axios.put(
+        `http://localhost:5000/gocoachbackend/us-central1/backend/sections/editSection/${sectionToDelete.id}`,
+        {
+          user_id: userId,
+          class_id: classId,
+          coach_notes: sectionToDelete.coachNotes,
+          display_text: sectionToDelete.displayText,
+          start_time: sectionToDelete.startTime,
+          finish_time: sectionToDelete.finishTime,
+          name: sectionToDelete.name
+        }
+      );
+      console.log('DELETE Section Response:', response.data);
+      // Add logic to update state or perform other actions after successful deletion
+    } catch (error) {
+      console.error('Error deleting section:', error.message);
+      // Handle error (display an error message, etc.)
+    }
   };
   
   const handleDeleteSection = async (index) => {
@@ -154,7 +182,7 @@ const ClassBuilder = () => {
                 </Col>
                 <Col md={9} className="p-3">
                   {/* Your main content goes here */}
-                  <h1>Class Builder - {userId}</h1>
+                  <h1>Class Builder</h1>
                   <Container>
                     <Row>
                       <Col>
@@ -243,7 +271,7 @@ const ClassBuilder = () => {
                                   <Form.Control
                                     type="text"
                                     value={editingSection.finishTime}
-                                    onChange={(e) => handleEditField('startTime', e.target.value)}
+                                    onChange={(e) => handleEditField('finishTime', e.target.value)}
                                   />
                                 ) : (
                                   section.finishTime
@@ -254,7 +282,7 @@ const ClassBuilder = () => {
                                   <Form.Control
                                     type="text"
                                     value={editingSection.displayText}
-                                    onChange={(e) => handleEditField('startTime', e.target.value)}
+                                    onChange={(e) => handleEditField('displayText', e.target.value)}
                                   />
                                 ) : (
                                   section.displayText
@@ -265,7 +293,7 @@ const ClassBuilder = () => {
                                   <Form.Control
                                     type="text"
                                     value={editingSection.coachNotes}
-                                    onChange={(e) => handleEditField('startTime', e.target.value)}
+                                    onChange={(e) => handleEditField('coachNotes', e.target.value)}
                                   />
                                 ) : (
                                   section.coachNotes
