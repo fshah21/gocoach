@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import * as logger from 'firebase-functions/logger';
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { setDoc, doc } from "firebase/firestore"; 
+import { setDoc, doc, getDoc } from "firebase/firestore"; 
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
 const firebaseConfig = {
@@ -32,7 +32,8 @@ export class UserController {
 
   
             return res.status(200).json({
-              user_id: user.uid
+              user_id: user.uid,
+              user_name: user.displayName
             });
           } catch (error: any) {
             logger.error(`Error during signup: ${error.message}`, { structuredData: true });
@@ -53,10 +54,20 @@ export class UserController {
           
           // Access the signed-in user information
         const user = userCredential.user;
+        console.log("USER IN LOGIN", user);
+
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+
+        if (!userDoc.exists()) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        const { displayName } = userDoc.data();
           
         console.log('User signed in:', user.email);
         return res.status(200).json({
-          user_id: user.uid
+          user_id: user.uid,
+          user_name: displayName
         });
           // Handle success or redirect
           // You can redirect or send a success response to the client

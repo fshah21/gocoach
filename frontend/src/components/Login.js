@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import DefaultNavbar from './DefaultNavbar';
 import { useDispatch } from 'react-redux';
-import { setUserId } from './actions';
+import { setUserId, setUserName } from './actions';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -35,6 +35,7 @@ const Login = () => {
           // Handle the response from your server, e.g., show a success message
           console.log('Login successful:', response.data);
           dispatch(setUserId(response.data.user_id));
+          dispatch(setUserName(response.data.user_name));
           // For demonstration purposes, you can clear the form fields
           setEmail('');
           setPassword('');
