@@ -244,19 +244,49 @@ const ClassBuilder = () => {
                               </div>
                             </div>
                             <Card.Text>
-                              <Col md={2}>
-                              <div className="editable-field">
-                                  <strong>NAME:</strong> {editIndex === index ? (
-                                    <Form.Control
-                                      type="text"
-                                      value={editingSection.name}
-                                      onChange={(e) => handleEditField('name', e.target.value)}
-                                    /> 
-                                  ) : (
-                                    <Form.Control type="text" value={section.name.toUpperCase()} onChange={(e) => handleEditField('name', e.target.value)} readOnly/> 
-                                  )}
-                                </div>
-                              </Col>
+                              <Row>
+                                <Col md={3}>
+                                  <div className="editable-field">
+                                    <strong>NAME:</strong> {editIndex === index ? (
+                                      <Form.Control
+                                        type="text"
+                                        value={editingSection.name}
+                                        onChange={(e) => handleEditField('name', e.target.value)}
+                                      /> 
+                                    ) : (
+                                      <Form.Control type="text" value={section.name.toUpperCase()} onChange={(e) => handleEditField('name', e.target.value)} readOnly/> 
+                                    )}
+                                  </div>
+                                </Col>
+                                <Col md={3}>
+                                  <div className="editable-field">
+                                    <strong>DISPLAY TEXT:</strong> {editIndex === index ? (
+                                      <Form.Control
+                                        value={editingSection.displayText}
+                                        as="textarea"
+                                        rows={3}
+                                        onChange={(e) => handleEditField('displayText', e.target.value)}
+                                      />
+                                    ) : (
+                                      <Form.Control as="textarea" rows={6} value={section.displayText} onChange={(e) => handleEditField('displayText', e.target.value)} readOnly/> 
+                                    )}
+                                  </div>
+                                </Col>
+                                <Col md={3}>
+                                  <div className="editable-field">
+                                    <strong>COACH NOTES:</strong> {editIndex === index ? (
+                                      <Form.Control
+                                        value={editingSection.coachNotes}
+                                        as="textarea"
+                                        rows={3}
+                                        onChange={(e) => handleEditField('coachNotes', e.target.value)}
+                                      />
+                                    ) : (
+                                      <Form.Control as="textarea" rows={6} value={section.coachNotes} onChange={(e) => handleEditField('coachNotes', e.target.value)} readOnly/> 
+                                    )}
+                                  </div>
+                                </Col>
+                              </Row>
                               <Col md={6}>
                                   <Row>
                                     <Col md={3}>
@@ -297,30 +327,6 @@ const ClassBuilder = () => {
                                   </Col>
                                 </Row>
                               </Col>
-                              <div className="editable-field">
-                                <strong>DISPLAY TEXT:</strong> {editIndex === index ? (
-                                  <Form.Control
-                                    value={editingSection.displayText}
-                                    as="textarea"
-                                    rows={3}
-                                    onChange={(e) => handleEditField('displayText', e.target.value)}
-                                  />
-                                ) : (
-                                  <Form.Control type="text" value={section.displayText} onChange={(e) => handleEditField('displayText', e.target.value)} readOnly/> 
-                                )}
-                              </div>
-                              <div className="editable-field">
-                                <strong>COACH NOTES:</strong> {editIndex === index ? (
-                                  <Form.Control
-                                    value={editingSection.coachNotes}
-                                    as="textarea"
-                                    rows={3}
-                                    onChange={(e) => handleEditField('coachNotes', e.target.value)}
-                                  />
-                                ) : (
-                                  <Form.Control type="text" value={section.coachNotes} onChange={(e) => handleEditField('coachNotes', e.target.value)} readOnly/> 
-                                )}
-                              </div>
                             </Card.Text>
                             {editIndex === index && (
                               <Button variant="primary" onClick={() => handleSaveEdit(index)} className="mt-2">
