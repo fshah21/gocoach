@@ -31,6 +31,29 @@ const ClassBuilder = () => {
     displayText: '',
     coachesNotes: ''
   });
+  const [toggleTimer, setToggleTimer] = useState(false);
+  const [timerInput, setTimerInput] = useState(0);
+  const [countDirection, setCountDirection] = useState('up');
+  const [prepTime, setPrepTime] = useState(0);
+  const [prepTimeToggle, setPrepTimeToggle] = useState(false);
+  const [toggleInterval, setToggleInterval] = useState(false);
+  const [intervalTime, setIntervalTime] = useState(false);
+
+  const handleToggleTimer = () => {
+    setToggleTimer(!toggleTimer);
+  };
+
+  const handlePrepTimeToggle = () => {
+    setPrepTimeToggle(!prepTimeToggle);
+  };
+  
+  const handleCountDirectionChange = (direction) => {
+    setCountDirection(direction);
+  };
+  
+  const handleToggleInterval = () => {
+    setToggleInterval(!toggleInterval);
+  };
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -232,17 +255,14 @@ const ClassBuilder = () => {
                       {sections.map((section, index) => (
                         <Card key={index} className="mt-3">
                           <Card.Body>
-                            <div className="d-flex justify-content-between align-items-center">
-                              <Card.Title>{section.name}</Card.Title>
-                              <div>
-                                <Button variant="outline-primary" className="mr-2" onClick={() => handleEditSection(index)}>
-                                  Edit
+                              <div className="d-flex justify-content-end align-items-end">
+                                <Button variant="outline-primary" className="mr-3" onClick={() => handleEditSection(index)}>
+                                  EDIT
                                 </Button>
-                                <Button variant="outline-danger" onClick={() => handleDeleteSection(index)}>
-                                  Delete
+                                <Button variant="outline-danger" className="ml-3" onClick={() => handleDeleteSection(index)}>
+                                  DELETE
                                 </Button>
                               </div>
-                            </div>
                             <Card.Text>
                               <Row>
                                 <Col md={3}>
@@ -257,6 +277,42 @@ const ClassBuilder = () => {
                                       <Form.Control type="text" value={section.name.toUpperCase()} onChange={(e) => handleEditField('name', e.target.value)} readOnly/> 
                                     )}
                                   </div>
+                                  <Row className='mt-2'>
+                                    <Col md={6}>
+                                      <strong>START TIME:</strong>
+                                    </Col>
+                                    <Col md={6}>
+                                      <strong>FINISH TIME:</strong>
+                                    </Col>
+                                  </Row>
+                                  <Row>
+                                  <Col md={6}>
+                                    <div className="editable-field">
+                                    {editIndex === index ? (
+                                      <Form.Control
+                                        type="text"
+                                        value={editingSection.startTime}
+                                        onChange={(e) => handleEditField('startTime', e.target.value)}
+                                      />
+                                    ) : (
+                                      <Form.Control type="text" value={section.startTime} onChange={(e) => handleEditField('startTime', e.target.value)} readOnly/> 
+                                    )}
+                                    </div>
+                                  </Col>
+                                  <Col md={6}>
+                                    <div className="editable-field">
+                                    {editIndex === index ? (
+                                      <Form.Control
+                                        type="text"
+                                        value={editingSection.finishTime}
+                                        onChange={(e) => handleEditField('finishTime', e.target.value)}
+                                      />
+                                    ) : (
+                                      <Form.Control type="text" value={section.finishTime} onChange={(e) => handleEditField('finishTime', e.target.value)} readOnly/> 
+                                    )}
+                                  </div>
+                                  </Col>
+                                </Row>
                                 </Col>
                                 <Col md={3}>
                                   <div className="editable-field">
@@ -288,44 +344,10 @@ const ClassBuilder = () => {
                                 </Col>
                               </Row>
                               <Col md={6}>
-                                  <Row>
-                                    <Col md={3}>
-                                      <strong>START TIME:</strong>
-                                    </Col>
-                                    <Col md={3}>
-                                      <strong>FINISH TIME:</strong>
-                                    </Col>
-                                  </Row>
+                                  
                               </Col>
                               <Col md={6}>
-                                <Row>
-                                  <Col md={3}>
-                                    <div className="editable-field">
-                                    {editIndex === index ? (
-                                      <Form.Control
-                                        type="text"
-                                        value={editingSection.startTime}
-                                        onChange={(e) => handleEditField('startTime', e.target.value)}
-                                      />
-                                    ) : (
-                                      <Form.Control type="text" value={section.startTime} onChange={(e) => handleEditField('startTime', e.target.value)} readOnly/> 
-                                    )}
-                                    </div>
-                                  </Col>
-                                  <Col md={3}>
-                                    <div className="editable-field">
-                                    {editIndex === index ? (
-                                      <Form.Control
-                                        type="text"
-                                        value={editingSection.finishTime}
-                                        onChange={(e) => handleEditField('finishTime', e.target.value)}
-                                      />
-                                    ) : (
-                                      <Form.Control type="text" value={section.finishTime} onChange={(e) => handleEditField('finishTime', e.target.value)} readOnly/> 
-                                    )}
-                                  </div>
-                                  </Col>
-                                </Row>
+                                
                               </Col>
                             </Card.Text>
                             {editIndex === index && (
@@ -402,6 +424,165 @@ const ClassBuilder = () => {
                 onChange={handleSectionInputChange}
               />
             </Form.Group>
+            <br/>
+            <Form.Group controlId="toggleTimer">
+              <Form.Check
+                type="switch"
+                label="Timer"
+                name="toggleTimer"
+                onChange={() => handleToggleTimer()}
+              />
+            </Form.Group>
+
+          {/* Input for Timer */}
+          {toggleTimer && (
+            <Form.Group controlId="timerInput">
+              <Form.Label>Timer Duration (HH:mm:ss):</Form.Label>
+              <div className="d-flex align-items-center">
+                <Form.Control
+                  type="number"
+                  name="timerHours"
+                  placeholder="HH"
+                  className="mr-2"
+                  min="0"
+                  max="99"
+                  value={sectionData.timerHours}
+                  onChange={handleSectionInputChange}
+                />
+                <Form.Control
+                  type="number"
+                  name="timerMinutes"
+                  placeholder="mm"
+                  className="mr-2"
+                  min="0"
+                  max="59"
+                  value={sectionData.timerMinutes}
+                  onChange={handleSectionInputChange}
+                />
+                <Form.Control
+                  type="number"
+                  name="timerSeconds"
+                  placeholder="ss"
+                  min="0"
+                  max="59"
+                  value={sectionData.timerSeconds}
+                  onChange={handleSectionInputChange}
+                />
+              </div>
+            </Form.Group>
+          )}
+
+          <br/>
+
+          {/* Count Up or Count Down */}
+          <Form.Group controlId="countDirection" className="d-flex align-items-center">
+            <Form.Label><span>Count Down   </span></Form.Label>
+            <Form.Check
+              type="switch"
+              label="Count Up"
+              name="toggleTimer"
+              onChange={() => handleCountDirectionChange()}
+            />
+          </Form.Group>
+
+          <br/>
+
+          {/* Prep Time */}
+          <Form.Group controlId="prepTime">
+            <Form.Check
+                type="switch"
+                label="Prep Time"
+                name="toggleTimer"
+                onChange={() => handlePrepTimeToggle()}
+              />
+          </Form.Group>
+
+          {prepTimeToggle && (
+            <Form.Group controlId="prepTimeInput">
+              <Form.Label>Prep Time (HH:mm:ss):</Form.Label>
+              <div className="d-flex align-items-center">
+                <Form.Control
+                  type="number"
+                  name="prepTimeHours"
+                  placeholder="HH"
+                  className="mr-2"
+                  min="0"
+                  max="99"
+                  value={sectionData.prepTimeHours}
+                  onChange={handleSectionInputChange}
+                />
+                <Form.Control
+                  type="number"
+                  name="prepTimeMinutes"
+                  placeholder="mm"
+                  className="mr-2"
+                  min="0"
+                  max="59"
+                  value={sectionData.prepTimeMinutes}
+                  onChange={handleSectionInputChange}
+                />
+                <Form.Control
+                  type="number"
+                  name="prepTimeSeconds"
+                  placeholder="ss"
+                  min="0"
+                  max="59"
+                  value={sectionData.prepTimeSeconds}
+                  onChange={handleSectionInputChange}
+                />
+              </div>
+            </Form.Group>
+          )}
+
+          <br/>
+
+          {/* Toggle for Interval Time */}
+          <Form.Group controlId="toggleInterval">
+            <Form.Check
+              type="switch"
+              label="Enable Interval Time"
+              name="toggleInterval"
+              onChange={() => handleToggleInterval()}
+            />
+          </Form.Group>
+
+          {/* Input for Interval Time */}
+          {toggleInterval && (
+            <Form.Group controlId="intervalTime">
+              <Form.Label>Interval Time (HH:mm:ss):</Form.Label>
+              <div className="d-flex align-items-center">
+                <Form.Control
+                  type="number"
+                  name="intervalHours"
+                  placeholder="HH"
+                  className="mr-2"
+                  min="0"
+                  max="99"
+                  value={sectionData.intervalHours}
+                  onChange={handleSectionInputChange}
+                />
+                <Form.Control
+                  type="number"
+                  name="intervalMinutes"
+                  placeholder="mm"
+                  className="mr-2"
+                  min="0"
+                  max="59"
+                  value={sectionData.intervalMinutes}
+                  onChange={handleSectionInputChange}
+                />
+                <Form.Control
+                  type="number"
+                  name="intervalSeconds"
+                  placeholder="ss"
+                  min="0"
+                  max="59"
+                  value={sectionData.intervalSeconds}
+                  onChange={handleSectionInputChange}
+                />
+              </div>
+            </Form.Group>
+          )}
           </Form>
         </Modal.Body>
         <Modal.Footer>
