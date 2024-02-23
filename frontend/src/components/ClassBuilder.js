@@ -20,7 +20,23 @@ const ClassBuilder = () => {
     startTime: '',
     finishTime: '',
     displayText: '',
-    coachesNotes: ''
+    coachesNotes: '',
+    toggleTimer: '',
+    timerHours: '',
+    timerMinutes: '',
+    timerSeconds: '',
+    timerInput: '',
+    prepTimeToggle: '',
+    prepTime: '',
+    prepTimeHours: '',
+    prepTimeMinutes: '',
+    prepTimeSeconds: '',
+    toggleInterval: '',
+    intervalHours: '',
+    intervalMinutes: '',
+    intervalSeconds: '',
+    intervalTime: '',
+    countDirection: '',
   });
   const [sections, setSections] = useState([]);
   const [editIndex, setEditIndex] = useState(-1);
@@ -32,15 +48,19 @@ const ClassBuilder = () => {
     coachesNotes: ''
   });
   const [toggleTimer, setToggleTimer] = useState(false);
-  const [timerInput, setTimerInput] = useState(0);
+  const [timerInput, setTimerInput] = useState('');
   const [countDirection, setCountDirection] = useState('up');
-  const [prepTime, setPrepTime] = useState(0);
+  const [prepTime, setPrepTime] = useState('');
   const [prepTimeToggle, setPrepTimeToggle] = useState(false);
   const [toggleInterval, setToggleInterval] = useState(false);
-  const [intervalTime, setIntervalTime] = useState(false);
+  const [intervalTime, setIntervalTime] = useState('');
 
   const handleToggleTimer = () => {
     setToggleTimer(!toggleTimer);
+    setSectionData({
+      ...sectionData,
+      toggleTimer: toggleTimer
+    });
   };
 
   const handlePrepTimeToggle = () => {
@@ -49,10 +69,18 @@ const ClassBuilder = () => {
   
   const handleCountDirectionChange = (direction) => {
     setCountDirection(direction);
+    setSectionData({
+      ...sectionData,
+      countDirection: direction
+    });
   };
   
   const handleToggleInterval = () => {
     setToggleInterval(!toggleInterval);
+    setSectionData({
+      ...sectionData,
+      prepTimeToggle: toggleInterval
+    });
   };
 
   const handleDateChange = (date) => {
@@ -93,10 +121,56 @@ const ClassBuilder = () => {
       ...sectionData,
       [e.target.name]: e.target.value
     });
+
+    console.log("SECTION INPUT CHANGE", sectionData);
+
+    if (e.target.name === 'timerHours' || e.target.name === 'timerMinutes' || e.target.name === 'timerSeconds') {
+      const hours = sectionData.timerHours || '00';
+      const minutes = sectionData.timerMinutes || '00';
+      const seconds = sectionData.timerSeconds || '00';
+
+      console.log("TIMER INPUT", `${hours}:${minutes}:${seconds}`);
+  
+      setTimerInput(`${hours}:${minutes}:${seconds}`);
+    }
+
+    if (e.target.name === 'prepTimeHours' || e.target.name === 'prepTimeMinutes' || e.target.name === 'prepTimeSeconds') {
+      const hours = sectionData.prepTimeHours || '00';
+      const minutes = sectionData.prepTimeMinutes || '00';
+      const seconds = sectionData.prepTimeSeconds || '00';
+  
+      setPrepTime(`${hours}:${minutes}:${seconds}`);
+    }
+
+    if (e.target.name === 'timerHours' || e.target.name === 'timerMinutes' || e.target.name === 'timerSeconds') {
+      const hours = sectionData.intervalHours || '00';
+      const minutes = sectionData.intervalMinutes || '00';
+      const seconds = sectionData.intervalSeconds || '00';
+  
+      setIntervalTime(`${hours}:${minutes}:${seconds}`);
+    }
+
   };
 
   const handleAddSection = () => {
     setShowModal(true);
+    setSectionData({
+      sectionName: '',
+      startTime: '',
+      finishTime: '',
+      displayText: '',
+      coachesNotes: '',
+      toggleTimer: false,
+      timerInput: '',
+      prepTimeToggle: false,
+      prepTime: '',
+      toggleInterval: false,
+      intervalTime: '',
+      countDirection: false,
+    });
+    setToggleTimer(false);
+    setPrepTimeToggle(false);
+    setToggleInterval(false);
   };
 
   const handleCloseModal = () => {
@@ -436,7 +510,7 @@ const ClassBuilder = () => {
 
           {/* Input for Timer */}
           {toggleTimer && (
-            <Form.Group controlId="timerInput">
+            <Form.Group>
               <Form.Label>Timer Duration (HH:mm:ss):</Form.Label>
               <div className="d-flex align-items-center">
                 <Form.Control
