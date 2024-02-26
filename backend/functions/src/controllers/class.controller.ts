@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { setDoc, doc, collection, Timestamp, getDocs, query, deleteDoc, updateDoc, orderBy } from "firebase/firestore"; 
+import { setDoc, doc, collection, Timestamp, getDocs, query, deleteDoc, updateDoc, orderBy, where } from "firebase/firestore"; 
 
 const firebaseConfig = {
   apiKey: "AIzaSyDBR06evXooU_y85weKKega5SHeC5LJDOY",
@@ -18,6 +18,14 @@ interface SectionUpdate {
     finishTime?: number;
     name?: string;
     startTime?: number;
+}
+
+interface ClassData {
+    id: string;
+    date: string; 
+    createdAt: string;
+    name: string;
+    duration: number;
 }
 
 const app = initializeApp(firebaseConfig);
@@ -178,6 +186,76 @@ export class ClassController {
         } catch (error: any) {
             console.error(`Error getting sections: ${error.message}`);
             return res.status(500).send(`Error getting sections: ${error.message}`);
+        }
+    }
+
+    static async getClassForToday(req: Request, res: Response) {
+        try {
+          const { user_id } = req.params;
+      
+          // Get today's date in the format YYYY-MM-DD
+          const todayDate = new Date().toISOString().split('T')[0];
+
+          const classesQuery = query(
+            collection(db, 'users', user_id, 'classes'),
+            orderBy('createdAt', 'desc')
+          );
+      
+          // Retrieve the sections
+          const classesSnapshot = await getDocs(classesQuery);
+      
+          // Extract section data
+          const classesData = classesSnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          })) as ClassData[];
+
+          const filteredClassesData = classesData
+            .filter((classData) => {
+                const classDate = new Date(classData.date).toISOString().split('T')[0];
+                console.log("CLASS DATE", classDate);
+                return classDate === todayDate;
+            });
+
+            filteredClassesData.forEach((classData) => {
+            // Process each class for today
+            console.log(classData);
+            });
+          
+      
+          return res.status(200).json(filteredClassesData);
+        } catch (error: any) {
+          console.error(`Error getting classes for today: ${error.message}`);
+          return res.status(500).send(`Error getting classes for today: ${error.message}`);
+        }
+    }
+
+    static async getPastClasses(req: Request, res: Response) {
+        try {
+            const { user_id } = req.params;
+        
+            // Get today's date in the format YYYY-MM-DD
+            const todayDate = new Date().toISOString().split('T')[0];
+        
+            const classesQuery = query(
+              collection(db, 'users', user_id, 'classes'),
+              where('date', '<', todayDate + 'T00:00:00.000Z'), // Include all classes before today
+              orderBy('date', 'desc')
+            );
+        
+            // Retrieve the classes
+            const classesSnapshot = await getDocs(classesQuery);
+        
+            // Extract class data
+            const classesData = classesSnapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            })) as ClassData[];
+        
+            return res.status(200).json(classesData);
+        } catch (error: any) {
+            console.error(`Error getting classes in the past: ${error.message}`);
+            return res.status(500).send(`Error getting classes in the past: ${error.message}`);
         }
     }
 }
