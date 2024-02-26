@@ -54,7 +54,8 @@ export class ClassController {
         try {
             const { class_id } = req.params;
             const { user_id, section_name, section_start_time, section_finish_time, section_display_text, 
-                section_coach_notes } = req.body;
+                section_coach_notes, count_direction_up, interval, prep, timer, timer_enabled, interval_enabled,
+                prep_enabled } = req.body;
         
             // Validate section data (add more validation as needed)
         
@@ -68,6 +69,13 @@ export class ClassController {
               finishTime: section_finish_time,
               displayText: section_display_text,
               coachNotes: section_coach_notes,
+              countDirectionUp: count_direction_up,
+              intervalTime: interval,
+              prepTime: prep,
+              timer: timer,
+              timerEnabled: timer_enabled,
+              intervalEnabled: interval_enabled,
+              prepEnabled: prep_enabled,
               createdAt: Timestamp.now(),
             });
         

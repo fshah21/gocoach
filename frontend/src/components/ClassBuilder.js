@@ -68,10 +68,13 @@ const ClassBuilder = () => {
   };
   
   const handleCountDirectionChange = (direction) => {
-    setCountDirection(direction);
+    const newDirection = countDirection === "up" ? "down" : "up";
+
+    console.log("DIRECTION", newDirection);
+    setCountDirection(newDirection);
     setSectionData({
       ...sectionData,
-      countDirection: direction
+      countDirection: newDirection
     });
   };
   
@@ -142,7 +145,7 @@ const ClassBuilder = () => {
       setPrepTime(`${hours}:${minutes}:${seconds}`);
     }
 
-    if (e.target.name === 'timerHours' || e.target.name === 'timerMinutes' || e.target.name === 'timerSeconds') {
+    if (e.target.name === 'intervalHours' || e.target.name === 'intervalMinutes' || e.target.name === 'intervalSeconds') {
       const hours = sectionData.intervalHours || '00';
       const minutes = sectionData.intervalMinutes || '00';
       const seconds = sectionData.intervalSeconds || '00';
@@ -166,7 +169,7 @@ const ClassBuilder = () => {
       prepTime: '',
       toggleInterval: false,
       intervalTime: '',
-      countDirection: false,
+      countDirection: '',
     });
     setToggleTimer(false);
     setPrepTimeToggle(false);
@@ -181,14 +184,34 @@ const ClassBuilder = () => {
     // Handle saving section data
     console.log('Section Data:', sectionData);
 
-    const response = await axios.post("http://localhost:5000/gocoachbackend/us-central1/backend/classes/addSection/" + classId, {
+    const timer = (sectionData.timerHours || "00") + ":" + (sectionData.timerMinutes || "00") + ":" + (sectionData.timerSeconds || "00");
+    console.log("timer", timer);
+
+    const prep = (sectionData.prepTimeHours || "00") + ":" + (sectionData.prepTimeMinutes || "00") + ":" + (sectionData.prepTimeSeconds || "00");
+    console.log("prep", prep);
+
+    const interval = (sectionData.intervalHours || "00") + ":" + (sectionData.intervalMinutes || "00") + ":" + (sectionData.intervalSeconds || "00");
+    console.log("interval", interval);
+
+    const obj = {
       user_id: userId,
       section_name: sectionData.sectionName,
       section_start_time: sectionData.startTime,
       section_finish_time: sectionData.finishTime,
       section_display_text: sectionData.displayText,
-      section_coach_notes: sectionData.coachesNotes
-    })
+      section_coach_notes: sectionData.coachesNotes,
+      timer: timer,
+      prep: prep,
+      interval: interval,
+      timer_enabled: toggleTimer,
+      interval_enabled: toggleInterval,
+      prep_enabled: prepTimeToggle,
+      count_direction_up: countDirection === "up" ? true : false 
+    }
+
+    console.log("OBJECT OBJ", obj);
+
+    const response = await axios.post("http://localhost:5000/gocoachbackend/us-central1/backend/classes/addSection/" + classId, obj);
 
     console.log("RESPONSE DATA FOR SECTION", response.data);
 
@@ -416,13 +439,142 @@ const ClassBuilder = () => {
                                     )}
                                   </div>
                                 </Col>
+                                <Col md={3}>
+                                  <div className="editable-field">
+                                    {editIndex === index ? (
+                                      <>
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                          <Form.Check
+                                              type="switch"
+                                              id={`timerSwitch-${index}`}
+                                              checked={editingSection.timerEnabled}
+                                              onChange={(e) => handleEditField('timerEnabled', e.target.checked)}
+                                            />
+                                            <strong style={{ marginLeft: '8px' }}>TIMER</strong>
+                                        </div>
+                                        {editingSection.timerEnabled && (
+                                          <Form.Control
+                                            type="text"
+                                            value={editingSection.timer}
+                                            onChange={(e) => handleEditField('timer', e.target.value)}
+                                          />
+                                        )}
+                                      </>
+                                    ) : (
+                                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                          <Form.Check
+                                            type="switch"
+                                            id={`timerSwitch-${index}`}
+                                            readOnly
+                                            checked={section.timerEnabled}
+                                          />
+                                          <strong style={{ marginLeft: '8px' }}>TIMER</strong>
+                                        </div>
+                                        <p style={{ marginLeft: '8px' }}>{section.timer}</p>
+                                      </div>
+                                    )}
+                                  </div>
+                                  <div className="editable-field">
+                                    {editIndex === index ? (
+                                      <>
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                          <Form.Check
+                                            type="switch"
+                                            id={`prepSwitch-${index}`}
+                                            checked={editingSection.prepEnabled}
+                                            onChange={(e) => handleEditField('prepEnabled', e.target.checked)}
+                                          />
+                                          <strong style={{ marginLeft: '8px' }}>PREP TIME</strong>
+                                        </div>
+                                        {editingSection.prepEnabled && (
+                                          <Form.Control
+                                            type="text"
+                                            value={editingSection.prepTime}
+                                            onChange={(e) => handleEditField('prepTime', e.target.value)}
+                                          />
+                                        )}
+                                      </>
+                                    ) : (
+                                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                          <Form.Check
+                                            type="switch"
+                                            id={`prepSwitch-${index}`}
+                                            readOnly
+                                            checked={section.prepEnabled}
+                                          />
+                                          <strong style={{ marginLeft: '8px' }}>PREP TIME</strong>
+                                        </div>
+                                        {section.prepEnabled && <p style={{ marginLeft: '8px' }}>{section.timer}</p>}
+                                      </div>
+                                    )}
+                                  </div>
+                                  <div className="editable-field">
+                                    {editIndex === index ? (
+                                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                                        <strong>COUNT UP</strong>
+                                        <Form.Check
+                                          type="switch"
+                                          className="ms-3"
+                                          id={`countDirectionSwitch-${index}`}
+                                          checked={editingSection.countDirectionUp}
+                                          onChange={(e) => handleEditField('countDirectionUp', e.target.checked)}
+                                        />
+                                        <strong style={{ marginLeft: '8px' }}>COUNT DOWN</strong>
+                                      </div>
+                                    ) : (
+                                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                                        <strong>COUNT UP</strong>
+                                        <Form.Check
+                                          type="switch"
+                                          className="ms-3"
+                                          id={`countDirectionSwitch-${index}`}
+                                          readOnly
+                                          checked={section.countDirectionUp}
+                                        />
+                                        <strong style={{ marginLeft: '8px' }}>COUNT DOWN</strong>
+                                      </div>
+                                    )}
+                                  </div>
+                                  <div className="editable-field mt-1">
+                                    {editIndex === index ? (
+                                      <>
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                          <Form.Check
+                                            type="switch"
+                                            id={`intervalSwitch-${index}`}
+                                            checked={editingSection.intervalEnabled}
+                                            onChange={(e) => handleEditField('intervalEnabled', e.target.checked)}
+                                          />
+                                          <strong style={{ marginLeft: '8px' }}>INTERVALS</strong>
+                                        </div>
+                                        
+                                        {editingSection.intervalEnabled && (
+                                          <Form.Control
+                                            type="text"
+                                            value={editingSection.intervalTime}
+                                            onChange={(e) => handleEditField('intervalTime', e.target.value)}
+                                          />
+                                        )}
+                                      </>
+                                    ) : (
+                                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }} className='mt-1'>
+                                          <div style={{ display: 'flex', alignItems: 'center' }}>
+                                            <Form.Check
+                                              type="switch"
+                                              id={`intervalSwitch-${index}`}
+                                              readOnly
+                                              checked={section.intervalEnabled}
+                                            />                                     
+                                            <strong style={{ marginLeft: '8px' }}>INTERVALS</strong>
+                                          </div>
+                                          {section.intervalEnabled && <p style={{ marginLeft: '8px' }}>{section.intervalTime}</p>}
+                                      </div>
+                                    )}
+                                  </div>
+                                </Col>
                               </Row>
-                              <Col md={6}>
-                                  
-                              </Col>
-                              <Col md={6}>
-                                
-                              </Col>
                             </Card.Text>
                             {editIndex === index && (
                               <Button variant="primary" onClick={() => handleSaveEdit(index)} className="mt-2">
