@@ -1,5 +1,6 @@
 import { SET_USER_ID } from './actionTypes';
 import { SET_USER_NAME } from './actionTypes';
+import { LOGOUT_USER } from './actionTypes';
 
 let initialState = {
   userId: null,
@@ -19,6 +20,11 @@ const UserReducer = (state = initialState, action) => {
         ...state,
         userName: action.payload,
       };
+    case LOGOUT_USER:
+        return {
+          userId: null,
+          userName: null,
+        };
     default:
       return state;
   }

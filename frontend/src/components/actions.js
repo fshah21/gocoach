@@ -1,5 +1,6 @@
 import { SET_USER_ID } from './actionTypes';
 import { SET_USER_NAME } from './actionTypes';
+import { LOGOUT_USER } from './actionTypes';
 
 export const setUserId = (userId) => {
   console.log("ACTION SET USER ID", userId);
@@ -15,4 +16,11 @@ export const setUserName = (userName) => {
     type: SET_USER_NAME,
     payload: userName,
   };
+};
+
+export const logoutUser = () => {
+  console.log("ACTION LOGOUT USER");
+  return {
+    type: LOGOUT_USER,
+  }
 };
