@@ -9,6 +9,7 @@ import Login from './components/Login';
 import Library from './components/Library';
 import Account from './components/Account';
 import Settings from './components/Settings';
+import ClassDisplayScreen from './components/ClassDisplayScreen';
 
 const Navigation = () => {
   return (
@@ -23,6 +24,7 @@ const Navigation = () => {
             <Route path="/library" element={<Library />} />
             <Route path="/account" element={<Account />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/class-display" element={<ClassDisplayScreen />} />
         </Routes>
       </div>
     </Router>
