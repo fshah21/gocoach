@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Container, ProgressBar, Button } from 'react-bootstrap';
+import { Container, Row, Button } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import axios from "axios";
+import CustomProgressBar from './CustomProgressBar';
 
 const ClassDisplayScreen = () => {
   const userId = useSelector(state => state.user.userId);
@@ -18,6 +19,7 @@ const ClassDisplayScreen = () => {
   const [timer, setTimer] = useState({ hours: 0, minutes: 0, seconds: 0 });
   const [progress, setProgress] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
+  const [sections, setSections] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,9 +48,19 @@ const ClassDisplayScreen = () => {
           .sort((a, b) => a.startTime.localeCompare(b.startTime));
 
       
-      console.log("SORTED SECTION NAMES", sortedSectionNames);
+        console.log("SORTED SECTION NAMES", sortedSectionNames);
 
         setSectionNames(sortedSectionNames);
+
+        const sectionData = sortedSectionNames
+        .map((section) => ({
+          label: section.name,  // Use 'label' to match the expected structure
+          completed: false,  // Set 'completed' based on your logic
+        }))
+
+        console.log("SET SECTIONS AFTER GETTING NAMES", sectionData);
+        setSections(sectionData);
+
       }
     };
   
@@ -118,32 +130,15 @@ const ClassDisplayScreen = () => {
               Stop
             </Button>
           )}
-
-          {sectionNames.length > 0 && (
-            <>
-              <h3>Section Names:</h3>
-              <ProgressBar style={{ height: '40px' }}>
-                {sectionNames.map((section, index) => (
-                  <ProgressBar
-                    key={index}
-                    variant="info"
-                    now={calculateProgress(section.startTime, section.finishTime, classDuration)}
-                    label={section.name}
-                  />
-                ))}
-              </ProgressBar>
-            </>
-          )}
+          
+          <div>
+            <h1>Progress Bar</h1>
+            <CustomProgressBar sections={sections} />
+          </div>
         </div>
       )}
     </Container>
   );
-};
-
-const calculateProgress = (startTime, finishTime, totalDuration) => {
-  const startPercentage = (startTime / totalDuration) * 100;
-  const finishPercentage = (finishTime / totalDuration) * 100;
-  return finishPercentage - startPercentage;
 };
 
 export default ClassDisplayScreen;
