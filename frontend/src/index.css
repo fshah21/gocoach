@@ -25,10 +25,10 @@ code {
 }
 
 .progress-bar {
-  display: flex;
-  height: 20px;
-  border: 1px solid #ccc;
-  margin: 20px;
+  display: grid; /* Use grid */
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Automatically adjust column width */
+  grid-gap: 1px; /* Add gap between grid items */
+  height: 40px;
 }
 
 .section {

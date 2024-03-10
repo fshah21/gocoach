@@ -55,11 +55,38 @@ const ClassDisplayScreen = () => {
         const sectionData = sortedSectionNames
         .map((section) => ({
           label: section.name,  // Use 'label' to match the expected structure
-          completed: false,  // Set 'completed' based on your logic
+          completed: false,
+          startTime: section.startTime,
+          finishTime: section.finishTime
         }))
 
-        console.log("SET SECTIONS AFTER GETTING NAMES", sectionData);
-        setSections(sectionData);
+        const obj1 = {
+          label: "Section one",
+          completed: false,
+          startTime : 1,
+          finishTime: 15
+        }
+
+        const obj2 = {
+          label: "Section two",
+          completed: false,
+          startTime : 16,
+          finishTime: 20
+        }
+
+        const obj3 = {
+          label: "Section three",
+          completed: false,
+          startTime : 21,
+          finishTime: 30
+        }
+
+        var sectionDataNew = [
+          obj1, obj2, obj3
+        ]
+
+        console.log("SET SECTIONS AFTER GETTING NAMES NEWWW", sectionDataNew);
+        setSections(sectionDataNew);
 
       }
     };
@@ -133,7 +160,7 @@ const ClassDisplayScreen = () => {
           
           <div>
             <h1>Progress Bar</h1>
-            <CustomProgressBar sections={sections} />
+            <CustomProgressBar sections={sections} classDuration={classDuration}/>
           </div>
         </div>
       )}
