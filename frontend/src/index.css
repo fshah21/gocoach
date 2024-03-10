@@ -24,11 +24,8 @@ code {
   margin-left: 200px; /* Adjust based on the width of your sidebar */
 }
 
-.progress-bar {
-  display: grid; /* Use grid */
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Automatically adjust column width */
-  grid-gap: 1px; /* Add gap between grid items */
-  height: 40px;
+.progress-bar-new {
+  display: flex;
 }
 
 .section {
@@ -53,4 +50,19 @@ code {
 .completed {
   background-color: #4caf50; /* Green color for completed sections */
   color: #fff; /* White text for completed sections */
+}
+
+.low-progress {
+  background-color: #ffcc00; /* Yellow color for low progress */
+  color: #333;
+}
+
+.medium-progress {
+  background-color: #ff9900; /* Orange color for medium progress */
+  color: #fff;
+}
+
+.high-progress {
+  background-color: #ff3300; /* Red color for high progress */
+  color: #fff;
 }

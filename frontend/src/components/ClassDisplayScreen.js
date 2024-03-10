@@ -20,6 +20,8 @@ const ClassDisplayScreen = () => {
   const [progress, setProgress] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [sections, setSections] = useState([]);
+  const [classDurationSeconds, setClassDurationSeconds] = useState(0);
+  const [timerSeconds, setTimerSeconds] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -88,11 +90,16 @@ const ClassDisplayScreen = () => {
         console.log("SET SECTIONS AFTER GETTING NAMES NEWWW", sectionDataNew);
         setSections(sectionDataNew);
 
+        console.log("CLASS DURATION IN MAIN", classDuration);
+        console.log("TIMER SECONDS", (timer.hours * 60 * 60) + (timer.minutes * 60) + timer.seconds)
+        setClassDurationSeconds(classDuration * 60 * 60);
+        setTimerSeconds((timer.hours * 60 * 60) + (timer.minutes * 60) + timer.seconds)
+
       }
     };
   
     fetchData();
-  }, [classInfo]);
+  }, [classInfo, classDurationSeconds, timerSeconds, timer, classDuration]);
 
   const handleStart = () => {
     setTimer({ hours: 0, minutes: 0, seconds: 0 });
@@ -127,7 +134,7 @@ const ClassDisplayScreen = () => {
         const currentProgress =
           (timer.hours * 3600 + timer.minutes * 60 + timer.seconds + 1) / totalSeconds;
         setProgress(currentProgress);
-  
+
         // Update the state
         setTimer(newTimer);
       }, 1000);
@@ -158,9 +165,8 @@ const ClassDisplayScreen = () => {
             </Button>
           )}
           
-          <div>
-            <h1>Progress Bar</h1>
-            <CustomProgressBar sections={sections} classDuration={classDuration}/>
+          <div className='mt-5'>
+            <CustomProgressBar sections={sections} classDuration={classDuration} classDurationSeconds={classDurationSeconds} timerSeconds={timerSeconds}/>
           </div>
         </div>
       )}
