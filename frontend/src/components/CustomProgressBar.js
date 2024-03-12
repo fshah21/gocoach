@@ -6,34 +6,21 @@ const CustomProgressBar = ({ sections, classDuration, classDurationSeconds, time
   console.log("CLASS DURATION SECONDS", classDurationSeconds);
   console.log("TIMER SECONDS", timerSeconds);
 
+  const progressFraction = (timerSeconds / classDurationSeconds) * 100;
+  const gradientColor = `linear-gradient(to right, green 0%, green ${progressFraction}%, #ccc ${progressFraction}%, #ccc 100%)`;
+
+  console.log("PROGRESS FRACTION NEWWW", progressFraction);
+
   return (
-    <div className="progress-bar-new">
+    <div className="progress-bar-new" style={{ background: gradientColor }}>
+      
       {sections.map((section, index) => {
         const sectionWidth = calculateSectionWidth(section.startTime, section.finishTime, classDuration);
-        const sectionStartTimeInSeconds = section.startTime * 60; // Convert start time to seconds
-
-        // Calculate the end time in seconds based on class duration
-        const sectionEndTimeInSeconds = (section.finishTime * 60) > classDurationSeconds
-          ? classDurationSeconds
-          : section.finishTime * 60;
-
-        // Calculate the percentage progress of the current section
-        const sectionProgress = (timerSeconds - sectionStartTimeInSeconds) / (sectionEndTimeInSeconds - sectionStartTimeInSeconds) * 100;
-
-        // Define color based on progress
-        let colorClass = '';
-        if (sectionProgress <= 25) {
-          colorClass = 'low-progress';
-        } else if (sectionProgress <= 75) {
-          colorClass = 'medium-progress';
-        } else {
-          colorClass = 'high-progress';
-        }
-
+       
         return (
           <div
             key={index}
-            className={`section ${colorClass}`}
+            className={`section`}
             style={{ width: `${sectionWidth}%` }}
           >
             <span className="label">{section.label}</span>

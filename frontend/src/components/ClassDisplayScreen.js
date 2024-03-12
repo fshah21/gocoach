@@ -62,37 +62,12 @@ const ClassDisplayScreen = () => {
           finishTime: section.finishTime
         }))
 
-        const obj1 = {
-          label: "Section one",
-          completed: false,
-          startTime : 1,
-          finishTime: 15
-        }
-
-        const obj2 = {
-          label: "Section two",
-          completed: false,
-          startTime : 16,
-          finishTime: 20
-        }
-
-        const obj3 = {
-          label: "Section three",
-          completed: false,
-          startTime : 21,
-          finishTime: 30
-        }
-
-        var sectionDataNew = [
-          obj1, obj2, obj3
-        ]
-
-        console.log("SET SECTIONS AFTER GETTING NAMES NEWWW", sectionDataNew);
-        setSections(sectionDataNew);
+        console.log("SET SECTIONS AFTER GETTING NAMES NEWEST", sectionData);
+        setSections(sectionData);
 
         console.log("CLASS DURATION IN MAIN", classDuration);
         console.log("TIMER SECONDS", (timer.hours * 60 * 60) + (timer.minutes * 60) + timer.seconds)
-        setClassDurationSeconds(classDuration * 60 * 60);
+        setClassDurationSeconds(classDuration * 60);
         setTimerSeconds((timer.hours * 60 * 60) + (timer.minutes * 60) + timer.seconds)
 
       }
