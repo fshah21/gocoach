@@ -51,7 +51,7 @@ const UserHome = () => {
     };
 
     fetchClassAndSections();
-  }, [userId, pastClassIds, classInfo]);
+  }, []);
 
   return (
     <>
