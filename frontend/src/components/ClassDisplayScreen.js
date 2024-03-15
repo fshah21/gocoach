@@ -29,6 +29,21 @@ const ClassDisplayScreen = () => {
       // Check if classId is defined
       if (classInfo) {
         // Extract values from the classId object
+
+        if(classDuration) {
+          setClassDurationSeconds(classDuration * 60);
+          setTimerSeconds((timer.hours * 60 * 60) + (timer.minutes * 60) + timer.seconds)
+          setShowProgressBar(true);
+        }
+      }
+    };
+  
+    fetchData();
+  }, [classDuration, timer]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (classInfo) {
         const { id, name, duration } = classInfo[0];
   
         // Set values as state variables
@@ -64,17 +79,9 @@ const ClassDisplayScreen = () => {
         }))
 
         setSections(sectionData);
-
-        if(classDuration) {
-          setClassDurationSeconds(classDuration * 60);
-          setTimerSeconds((timer.hours * 60 * 60) + (timer.minutes * 60) + timer.seconds)
-          setShowProgressBar(true);
-        }
       }
-    };
-  
-    fetchData();
-  }, [classDuration, timer]);
+    }
+  })
 
   useEffect(() => {
     if (sections.length > 0) {
