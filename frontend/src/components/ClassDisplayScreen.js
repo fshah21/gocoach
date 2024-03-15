@@ -9,7 +9,6 @@ const ClassDisplayScreen = () => {
   const userId = useSelector(state => state.user.userId);
   const location = useLocation();
   const classInfo = location.state?.classId;
-  console.log("CLASS", classInfo);
 
   // Use state to manage the class variables
   const [classId, setClassId] = useState(null);
@@ -28,23 +27,18 @@ const ClassDisplayScreen = () => {
   useEffect(() => {
     const fetchData = async () => {
       // Check if classId is defined
-      console.log("STARTING HERE");
       if (classInfo) {
         // Extract values from the classId object
         const { id, name, duration } = classInfo[0];
-
-        console.log("CLASS INFO", classInfo);
   
         // Set values as state variables
         setClassId(id);
         setClassName(name);
         setClassDuration(duration);
   
-        console.log("SET SECTIONS");
         // Fetch sections for the class
         const sectionsResponse = await axios.get(`http://localhost:5000/gocoachbackend/us-central1/backend/users/${userId}/classes/getAllSectionsInClass/${id}`);
         
-        console.log("SECTIONS RESPONSE", sectionsResponse);
         // Extract section names and order them by startTime
         const sortedSectionNames = sectionsResponse.data
           .map((section) => ({
@@ -57,8 +51,6 @@ const ClassDisplayScreen = () => {
           .sort((a, b) => a.startTime.localeCompare(b.startTime));
 
       
-        console.log("SORTED SECTION NAMES", sortedSectionNames);
-
         setSectionNames(sortedSectionNames);
 
         const sectionData = sortedSectionNames
@@ -71,12 +63,9 @@ const ClassDisplayScreen = () => {
           finishTime: section.finishTime
         }))
 
-        console.log("SET SECTIONS AFTER GETTING NAMES NEWEST", sectionData);
         setSections(sectionData);
 
         if(classDuration) {
-          console.log("CLASS DURATION IN MAIN", classDuration * 60);
-          console.log("TIMER SECONDS", (timer.hours * 60 * 60) + (timer.minutes * 60) + timer.seconds)
           setClassDurationSeconds(classDuration * 60);
           setTimerSeconds((timer.hours * 60 * 60) + (timer.minutes * 60) + timer.seconds)
           setShowProgressBar(true);
@@ -89,11 +78,7 @@ const ClassDisplayScreen = () => {
 
   useEffect(() => {
     if (sections.length > 0) {
-      console.log("SECTIONS LENGTH > 0");
-      console.log("TIMER", timer);
       const currentMinute = timer.hours * 60 + timer.minutes;
-      console.log("CURRENT MINUTES", currentMinute);
-
       var currentSectionIndex = sections.findIndex(section =>
         currentMinute >= parseInt(section.startTime) &&
         currentMinute < parseInt(section.finishTime)
@@ -103,10 +88,7 @@ const ClassDisplayScreen = () => {
         currentSectionIndex = 0;
       }
 
-      console.log("CURRENT SECTION INDEX", currentSectionIndex);
-
       if (currentSectionIndex !== -1) {
-        console.log("CURRENT SECTION INFO", sections[currentSectionIndex]);
         setCurrentSection(sections[currentSectionIndex]);
       } else {
         setCurrentSection(null);
@@ -127,34 +109,39 @@ const ClassDisplayScreen = () => {
     let interval;
     if (isRunning) {
       interval = setInterval(() => {
-
-        if(timer.seconds === 59) {
-            timer.minutes = timer.minutes + 1;
-            timer.seconds = 0;
-        } else if(timer.minutes === 59) {
-            timer.minutes = 0;
-            timer.hours = timer.hours + 1;
+        if (timer.seconds === 59) {
+          timer.minutes = timer.minutes + 1;
+          timer.seconds = 0;
+        } else if (timer.minutes === 59) {
+          timer.minutes = 0;
+          timer.hours = timer.hours + 1;
+        } else if ((timer.hours * 3600 + timer.minutes * 60 + timer.seconds + 1) >= classDurationSeconds) {
+          // If the current time exceeds the class duration, stop the timer
+          console.log("TIMER IS EXCEEDED");
+          handleStop();
+          return;
+        } else {
+          timer.seconds = timer.seconds + 1;
         }
         // Update the timer
         const newTimer = {
           hours: timer.hours,
           minutes: timer.minutes,
-          seconds: timer.seconds + 1,
+          seconds: timer.seconds,
         };
   
         // Calculate progress
         const totalSeconds = classDuration * 60 * 60;
-        const currentProgress =
-          (timer.hours * 3600 + timer.minutes * 60 + timer.seconds + 1) / totalSeconds;
+        const currentProgress = (timer.hours * 3600 + timer.minutes * 60 + timer.seconds) / totalSeconds;
         setProgress(currentProgress);
-
+  
         // Update the state
         setTimer(newTimer);
       }, 1000);
     }
   
     return () => clearInterval(interval);
-  }, [isRunning, timer, classDuration]);
+  }, [isRunning, timer, classDuration, classDurationSeconds]);
 
   return (
     <Container>

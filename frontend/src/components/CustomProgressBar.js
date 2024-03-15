@@ -2,14 +2,8 @@ import React from 'react';
 import './ProgressBar.css'; // Import the CSS file for styling
 
 const CustomProgressBar = ({ sections, classDuration, classDurationSeconds, timerSeconds }) => {
-  console.log("IN PROGRESS BAR", sections);
-  console.log("CLASS DURATION SECONDS", classDurationSeconds);
-  console.log("TIMER SECONDS", timerSeconds);
-
   const progressFraction = (timerSeconds / classDurationSeconds) * 100;
   const gradientColor = `linear-gradient(to right, green 0%, green ${progressFraction}%, #ccc ${progressFraction}%, #ccc 100%)`;
-
-  console.log("PROGRESS FRACTION NEWWW", progressFraction);
 
   return (
     <div className="progress-bar-new" style={{ background: gradientColor }}>

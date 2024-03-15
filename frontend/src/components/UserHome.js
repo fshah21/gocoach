@@ -16,7 +16,6 @@ const UserHome = () => {
   const [pastClasses, setPastClasses] = useState([]);
 
   const handleStartClass = () => {
-    console.log("START CLASS IS CLICKED");
     navigate('/class-display', { state: { classId: classInfo } });
   }
 
