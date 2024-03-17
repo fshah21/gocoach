@@ -41,6 +41,7 @@ const UserHome = () => {
         setPastClassIds(classIds.slice(0, 2));
 
         const pastSectionsPromises = pastClassIds.map(async classId => {
+          console.log("CLASS ID IN PAST SECTIONS", classId);
           const sectionsResponse = await axios.get(`http://localhost:5000/gocoachbackend/us-central1/backend/users/${userId}/classes/getAllSectionsInClass/${classId}`);
           return sectionsResponse.data;
         });

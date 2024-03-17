@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Row, Col, Button } from 'react-bootstrap';
+import { Container, Modal, Row, Col, Button } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import axios from "axios";
@@ -23,6 +23,8 @@ const ClassDisplayScreen = () => {
   const [timerSeconds, setTimerSeconds] = useState(0);
   const [showProgressBar, setShowProgressBar] = useState(false); 
   const [currentSection, setCurrentSection] = useState(null);
+  const [showRateModal, setShowRateModal] = useState(false);
+  const [showRatingModal, setShowRatingModal] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -112,6 +114,7 @@ const ClassDisplayScreen = () => {
 
   const handleStop = () => {
     setIsRunning(false);
+    handleShowRateModal();
   };
 
   useEffect(() => {
@@ -151,6 +154,36 @@ const ClassDisplayScreen = () => {
   
     return () => clearInterval(interval);
   }, [isRunning, timer, classDuration, classDurationSeconds]);
+  
+  const handleShowRateModal = () => {
+    setShowRateModal(true);
+  };
+
+  // Function to handle closing rate modal
+  const handleCloseRateModal = () => {
+    setShowRateModal(false);
+  };
+
+  // Function to handle showing rating modal
+  const handleShowRatingModal = () => {
+    setShowRateModal(false); // Close rate modal
+    setShowRatingModal(true);
+  };
+
+  // Function to handle closing rating modal
+  const handleCloseRatingModal = () => {
+    setShowRatingModal(false);
+  };
+
+  // Function to handle "Yes" click in rate modal
+  const handleRateYesClick = () => {
+    handleShowRatingModal(); // Show rating modal
+  };
+
+  // Function to handle "No" click in rate modal
+  const handleRateNoClick = () => {
+    handleCloseRateModal(); // Close rate modal
+  };
 
   return (
     <Container>
@@ -198,6 +231,40 @@ const ClassDisplayScreen = () => {
           )}
         </div>
       )}
+
+      <Modal show={showRateModal} onHide={handleCloseRateModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Rate the Class</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Thanks for completing the class. Would you like to rate this class?</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleRateNoClick}>
+            No
+          </Button>
+          <Button variant="primary" onClick={handleRateYesClick}>
+            Yes
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Modal for rating */}
+      <Modal show={showRatingModal} onHide={handleCloseRatingModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Rate this Class</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {/* Implement your rating UI here */}
+          <i class="icon-star-empty"></i>
+        </Modal.Body>
+        <Modal.Footer>
+          {/* You can add buttons or actions related to rating here */}
+          <Button variant="secondary" onClick={handleCloseRatingModal}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };
