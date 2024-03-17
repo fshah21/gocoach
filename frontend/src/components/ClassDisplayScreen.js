@@ -39,10 +39,11 @@ const ClassDisplayScreen = () => {
     };
   
     fetchData();
-  }, [classDuration, timer]);
+  }, [classInfo, classDuration, timer]);
 
   useEffect(() => {
     const fetchData = async () => {
+      console.log("FETCH CLASS AND SECTIONS IN CLASS DISPLAY SCREEN");
       if (classInfo) {
         const { id, name, duration } = classInfo[0];
   
@@ -80,8 +81,9 @@ const ClassDisplayScreen = () => {
 
         setSections(sectionData);
       }
-    }
-  })
+    };
+    fetchData();
+  }, [])
 
   useEffect(() => {
     if (sections.length > 0) {
@@ -101,7 +103,7 @@ const ClassDisplayScreen = () => {
         setCurrentSection(null);
       }
     }
-  }, [timer, sections]);
+  }, [classInfo, timer, sections]);
 
   const handleStart = () => {
     setTimer({ hours: 0, minutes: 0, seconds: 0 });
@@ -152,6 +154,7 @@ const ClassDisplayScreen = () => {
 
   return (
     <Container>
+      <p>Class Display Screen</p>
       {classId && (
         <div style={{ textAlign: 'center' }}>
           <p style={{ fontSize: '8rem' }}>{`${timer.hours

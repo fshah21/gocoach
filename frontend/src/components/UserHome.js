@@ -16,14 +16,18 @@ const UserHome = () => {
   const [pastClasses, setPastClasses] = useState([]);
 
   const handleStartClass = () => {
+    console.log("START BUTTON IS CLICKED");
+    console.log("CLASS INFO IN START BUTTON", classInfo);
     navigate('/class-display', { state: { classId: classInfo } });
   }
 
   useEffect(() => {
     const fetchClassAndSections = async () => {
       try {
+        console.log("FETCH CLASS AND SECTIONS IN USER HOME");
         // Fetch class for today
         const classResponse = await axios.get('http://localhost:5000/gocoachbackend/us-central1/backend/classes/'+ userId + '/getClassForToday');
+        console.log("CLASS RESPONSE", classResponse.data);
         setClassInfo(classResponse.data);
 
         // Fetch sections for the class
