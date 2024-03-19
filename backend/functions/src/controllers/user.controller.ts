@@ -4,6 +4,7 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { setDoc, doc, getDoc } from "firebase/firestore"; 
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { collection, Timestamp } from "firebase/firestore"; 
 
 const firebaseConfig = {
   apiKey: "AIzaSyDBR06evXooU_y85weKKega5SHeC5LJDOY",
@@ -76,5 +77,35 @@ export class UserController {
           console.error('Error during login:', error.message);
           return res.status(500).json({ error: 'Something went wrong.' });
         }
+    }
+
+    static async saveCard(req: Request, res: Response) {
+      try {
+        const { user_id } = req.body; // Assuming you're sending the user ID along with card details
+        const { card_number, expiry_date, cvv, card_name } = req.body;
+
+        // Check if all required fields are provided
+        if (!user_id || !card_number || !expiry_date || !cvv || !card_name) {
+          return res.status(400).json({ error: 'All fields are required.' });
+        }
+
+        // Create a reference to the "payments" collection for the user
+        const paymentRef = doc(collection(db, 'users', user_id, 'payments')).id;     
+
+        // Add the card details to the "payments" collection
+        await setDoc(doc(db, 'users', user_id, 'payments', paymentRef), {
+          card_number: card_number,
+          expiry_date: expiry_date,
+          cvv: cvv,
+          card_name: card_name,
+          createdAt: Timestamp.now(),
+        });
+
+        return res.status(200).json({ message: 'Card details saved successfully.' });
+      } catch (error: any) {
+        console.error('Error saving card details:', error.message);
+        return res.status(500).json({ error: 'Something went wrong.' });
+      }
+
     }
 }
