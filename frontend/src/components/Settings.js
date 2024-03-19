@@ -3,6 +3,7 @@ import { Col, Container, Row, Card, Button } from 'react-bootstrap';
 import DefaultNavbar from './DefaultNavbar';
 import LeftNavigation from './LeftNavigation';
 import { useSelector } from 'react-redux';
+import AddPaymentCardModal from './AddPaymentCardModal';
 
 const Settings = () => {
   const userId = useSelector(state => state.user.userId);
@@ -11,6 +12,13 @@ const Settings = () => {
   const [clockSound, setClockSound] = useState('');
   const [themeMode, setThemeMode] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('****-****-****-3290');
+  const [showAddCardModal, setShowAddCardModal] = useState(false);
+
+  // Function to handle adding a payment card
+  const handleAddCard = (cardDetails) => {
+    // Implement your logic to add the card, e.g., dispatch an action
+    console.log('Adding card:', cardDetails);
+  };
 
   // Function to handle adding a payment card (dummy implementation)
   const handleAddPaymentCard = () => {
@@ -83,18 +91,22 @@ const Settings = () => {
           </Card>
 
 
-            <Card className="mt-3">
+          <Card className="mt-3">
               <Card.Body>
                 <Card.Title>Payments</Card.Title>
                 <Card.Text>Current Payment Method: {paymentMethod}</Card.Text>
-                <Button variant="primary" onClick={handleAddPaymentCard}>
-                  Add Payment Card
-                </Button>
+                <Button variant="primary" onClick={() => setShowAddCardModal(true)}>Add Payment Card</Button>
               </Card.Body>
             </Card>
           </Col>
         </Row>
       </Container>
+
+      <AddPaymentCardModal 
+        show={showAddCardModal} 
+        handleClose={() => setShowAddCardModal(false)} 
+        handleAddCard={handleAddCard} 
+      />
     </>
   );
 };
