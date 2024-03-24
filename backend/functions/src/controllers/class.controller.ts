@@ -258,4 +258,22 @@ export class ClassController {
             return res.status(500).send(`Error getting classes in the past: ${error.message}`);
         }
     }
+
+    static async saveRating(req: Request, res: Response) {
+      try {
+          const { class_id } = req.params;
+          const { user_id, rating } = req.body;
+            
+          const classRef = doc(db, 'users', user_id, 'classes', class_id);   
+
+          await setDoc(classRef, { rating: rating }, { merge: true });
+      
+          return res.status(201).json({ 
+              class_id: class_id 
+          });
+      } catch (error: any) {
+          console.error(`Error saving rating: ${error.message}`);
+          return res.status(500).send(`Error saving rating: ${error.message}`);
+      }
+  }
 }
