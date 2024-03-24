@@ -3,7 +3,10 @@ import { Container, Modal, Row, Col, Button } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import axios from "axios";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStar as farStar } from '@fortawesome/free-regular-svg-icons';
 import CustomProgressBar from './CustomProgressBar';
+import { BsStarFill, BsStar } from 'react-icons/bs';
 
 const ClassDisplayScreen = () => {
   const userId = useSelector(state => state.user.userId);
@@ -25,6 +28,7 @@ const ClassDisplayScreen = () => {
   const [currentSection, setCurrentSection] = useState(null);
   const [showRateModal, setShowRateModal] = useState(false);
   const [showRatingModal, setShowRatingModal] = useState(false);
+  const [rating, setRating] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -185,6 +189,10 @@ const ClassDisplayScreen = () => {
     handleCloseRateModal(); // Close rate modal
   };
 
+  const handleStarClick = (starIndex) => {
+    setRating(starIndex + 1); // Set the rating value (stars are 1-indexed)
+  };
+
   return (
     <Container>
       <p>Class Display Screen</p>
@@ -255,8 +263,16 @@ const ClassDisplayScreen = () => {
           <Modal.Title>Rate this Class</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {/* Implement your rating UI here */}
-          <i class="icon-star-empty"></i>
+          {/* Display star icons and handle their click events */}
+          {[...Array(5)].map((_, index) => (
+            <span
+              key={index}
+              onClick={() => handleStarClick(index)}
+              style={{ cursor: 'pointer' }}
+            >
+              {index < rating ? <BsStarFill /> : <BsStar />}
+            </span>
+          ))}
         </Modal.Body>
         <Modal.Footer>
           {/* You can add buttons or actions related to rating here */}

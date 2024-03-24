@@ -31,16 +31,18 @@ const UserHome = () => {
         setClassInfo(classResponse.data);
 
         // Fetch sections for the class
-        const classId = classResponse.data[0].id;
-        const sectionsResponse = await axios.get('http://localhost:5000/gocoachbackend/us-central1/backend/users/'+ userId + '/classes/getAllSectionsInClass/' + classId);
-        setSections(sectionsResponse.data);
-
+        if(classResponse.data[0] !== undefined) {
+          const classId = classResponse.data[0].id;
+          const sectionsResponse = await axios.get('http://localhost:5000/gocoachbackend/us-central1/backend/users/'+ userId + '/classes/getAllSectionsInClass/' + classId);
+          setSections(sectionsResponse.data);  
+        }
+        
         const pastClassesResponse = await axios.get(`http://localhost:5000/gocoachbackend/us-central1/backend/classes/${userId}/getPastClasses`);
         setPastClasses(pastClassesResponse.data.slice(0, 2));
         const classIds = pastClassesResponse.data.map(pastClass => pastClass.id);
         setPastClassIds(classIds.slice(0, 2));
 
-        const pastSectionsPromises = pastClassIds.map(async classId => {
+        const pastSectionsPromises = classIds.map(async classId => {
           console.log("CLASS ID IN PAST SECTIONS", classId);
           const sectionsResponse = await axios.get(`http://localhost:5000/gocoachbackend/us-central1/backend/users/${userId}/classes/getAllSectionsInClass/${classId}`);
           return sectionsResponse.data;
