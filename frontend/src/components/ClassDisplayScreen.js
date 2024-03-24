@@ -175,8 +175,17 @@ const ClassDisplayScreen = () => {
   };
 
   // Function to handle closing rating modal
-  const handleCloseRatingModal = () => {
+  const handleCloseRatingModal = async () => {
     setShowRatingModal(false);
+    console.log("IN HANDLE START CLICK");
+    console.log("USER ID", userId);
+    console.log("CLASS ID", classId);
+    console.log("STAR INDEX", rating + 1);
+
+    await axios.post(`http://localhost:5000/gocoachbackend/us-central1/backend/classes/saveRating/${classId}`, {
+      user_id: userId,
+      rating: rating
+    });
   };
 
   // Function to handle "Yes" click in rate modal
@@ -190,7 +199,12 @@ const ClassDisplayScreen = () => {
   };
 
   const handleStarClick = (starIndex) => {
+    console.log("HANDLE STAR CLICK");
     setRating(starIndex + 1); // Set the rating value (stars are 1-indexed)
+    console.log("IN HANDLE START CLICK");
+    console.log("USER ID", userId);
+    console.log("CLASS ID", classId);
+    console.log("STAR INDEX + 1", starIndex);
   };
 
   return (
