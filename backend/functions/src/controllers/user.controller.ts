@@ -2,9 +2,9 @@ import { Request, Response } from "express";
 import * as logger from 'firebase-functions/logger';
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { setDoc, doc, getDoc } from "firebase/firestore"; 
+import { setDoc, doc, getDocs, query, getDoc } from "firebase/firestore"; 
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { collection, Timestamp } from "firebase/firestore"; 
+import { collection } from "firebase/firestore"; 
 
 const firebaseConfig = {
   apiKey: "AIzaSyDBR06evXooU_y85weKKega5SHeC5LJDOY",
@@ -79,33 +79,55 @@ export class UserController {
         }
     }
 
-    static async saveCard(req: Request, res: Response) {
+    static async addPaymentMethod(req: Request, res: Response) {
       try {
-        const { user_id } = req.body; // Assuming you're sending the user ID along with card details
-        const { card_number, expiry_date, cvv, card_name } = req.body;
-
-        // Check if all required fields are provided
-        if (!user_id || !card_number || !expiry_date || !cvv || !card_name) {
-          return res.status(400).json({ error: 'All fields are required.' });
-        }
-
-        // Create a reference to the "payments" collection for the user
-        const paymentRef = doc(collection(db, 'users', user_id, 'payments')).id;     
-
-        // Add the card details to the "payments" collection
-        await setDoc(doc(db, 'users', user_id, 'payments', paymentRef), {
+        const { user_id } = req.params;
+        const { card_number, expiry_date, cvv } = req.body;
+    
+        // Reference to the payment methods collection under the user document
+        const paymentMethodsCollectionRef = collection(db, `users/${user_id}/payment_methods`);
+        
+        // Add the payment method data to Firestore
+        const newPaymentMethodRef = doc(paymentMethodsCollectionRef);
+        await setDoc(newPaymentMethodRef, {
           card_number: card_number,
           expiry_date: expiry_date,
-          cvv: cvv,
-          card_name: card_name,
-          createdAt: Timestamp.now(),
+          cvv: cvv
         });
-
-        return res.status(200).json({ message: 'Card details saved successfully.' });
+    
+        return res.status(201).json({ success: true, message: 'Payment method added successfully', paymentMethodId: newPaymentMethodRef.id });
       } catch (error: any) {
-        console.error('Error saving card details:', error.message);
-        return res.status(500).json({ error: 'Something went wrong.' });
+        console.error(`Error adding payment method: ${error.message}`);
+        return res.status(500).send(`Error adding payment method: ${error.message}`);
       }
+    }
 
+    static async getPaymentMethod(req: Request, res: Response) {
+      try {
+        const { user_id } = req.params;
+    
+        // Reference to the payment methods collection under the user and class document
+        const paymentMethodsCollectionRef = collection(db, `users/${user_id}/payment_methods`);
+        
+        // Query the payment methods collection to get the payment method
+        const paymentMethodsQuery = query(paymentMethodsCollectionRef);
+    
+        // Get the payment method documents
+        const querySnapshot = await getDocs(paymentMethodsQuery);
+    
+        // Check if payment method exists
+        if (querySnapshot.empty) {
+          return res.status(404).json({ success: false, message: 'No payment method found' });
+        }
+    
+        // Since there should be only one payment method, directly get the first document
+        const paymentMethodDoc = querySnapshot.docs[0];
+        const paymentMethodData = paymentMethodDoc.data();
+    
+        return res.status(200).json({ paymentMethodData });
+      } catch (error: any) {
+        console.error(`Error retrieving payment method: ${error.message}`);
+        return res.status(500).send(`Error retrieving payment method: ${error.message}`);
+      }
     }
 }

@@ -13,4 +13,3 @@ classRoutes.get("/classes/:user_id/getClassForToday", ClassController.getClassFo
 classRoutes.get("/classes/:user_id/getPastClasses", ClassController.getPastClasses);
 classRoutes.post("/classes/saveRating/:class_id", ClassController.saveRating);
 classRoutes.post("/classes/:class_id/getClassRating", ClassController.getClassRating);
-classRoutes.post("/classes/:class_id/addPaymentMethod", ClassController.addPaymentMethod);
