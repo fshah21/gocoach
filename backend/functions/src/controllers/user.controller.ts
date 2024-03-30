@@ -82,7 +82,7 @@ export class UserController {
     static async addPaymentMethod(req: Request, res: Response) {
       try {
         const { user_id } = req.params;
-        const { card_number, expiry_date, cvv } = req.body;
+        const { card_number, expiry_date, cvv, name_on_card } = req.body;
     
         // Reference to the payment methods collection under the user document
         const paymentMethodsCollectionRef = collection(db, `users/${user_id}/payment_methods`);
@@ -92,7 +92,8 @@ export class UserController {
         await setDoc(newPaymentMethodRef, {
           card_number: card_number,
           expiry_date: expiry_date,
-          cvv: cvv
+          cvv: cvv,
+          name_on_card: name_on_card
         });
     
         return res.status(201).json({ success: true, message: 'Payment method added successfully', paymentMethodId: newPaymentMethodRef.id });

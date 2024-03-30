@@ -4,6 +4,7 @@ import DefaultNavbar from './DefaultNavbar';
 import LeftNavigation from './LeftNavigation';
 import { useSelector } from 'react-redux';
 import AddPaymentCardModal from './AddPaymentCardModal';
+import axios from "axios";
 
 const Settings = () => {
   const userId = useSelector(state => state.user.userId);
@@ -11,13 +12,39 @@ const Settings = () => {
   const [backgroundColor, setBackgroundColor] = useState('');
   const [clockSound, setClockSound] = useState('');
   const [themeMode, setThemeMode] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState('****-****-****-3290');
+  const [paymentMethod, setPaymentMethod] = useState('');
   const [showAddCardModal, setShowAddCardModal] = useState(false);
 
+  const getPaymentMethod = async () => {
+    try {
+      console.log("GET PAYMENT METHOD");
+      const response = await axios.get(`http://localhost:5000/gocoachbackend/us-central1/backend/users/${userId}/getPaymentMethod`);
+      const paymentMethodData = response.data.paymentMethodData.card_number;
+      const blurredCardNumber = paymentMethodData.substring(0, 15).replace(/\d/g, '*') + paymentMethodData.substring(15);
+      setPaymentMethod(blurredCardNumber); // Set payment method in state
+    } catch (error) {
+      console.error('Error fetching payment method:', error);
+    }
+  };
+
+  useEffect(() => {
+    getPaymentMethod(); // Fetch payment method data when component mounts
+  }, []); // Fetch again if userId changes
+
   // Function to handle adding a payment card
-  const handleAddCard = (cardDetails) => {
-    // Implement your logic to add the card, e.g., dispatch an action
-    console.log('Adding card:', cardDetails);
+  const handleAddCard = async (cardDetails) => {
+    console.log("CARD DETIALS IN HANDLE ADD CARD");
+    console.log(cardDetails);
+
+    const response = await axios.post(`http://localhost:5000/gocoachbackend/us-central1/backend/users/${userId}/addPaymentMethod`, {
+      card_number: cardDetails.cardNumber,
+      expiry_date: cardDetails.expiryDate,
+      cvv: cardDetails.cvv,
+      name_on_card: cardDetails.cardName
+    });
+
+    console.log("RESPONSE OF SAVING CARD", response.data);
+
   };
 
   // Function to handle adding a payment card (dummy implementation)
