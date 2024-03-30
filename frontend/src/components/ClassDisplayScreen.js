@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar as farStar } from '@fortawesome/free-regular-svg-icons';
 import CustomProgressBar from './CustomProgressBar';
 import { BsStarFill, BsStar } from 'react-icons/bs';
+import { useNavigate } from 'react-router-dom';
 
 const ClassDisplayScreen = () => {
   const userId = useSelector(state => state.user.userId);
@@ -29,6 +30,7 @@ const ClassDisplayScreen = () => {
   const [showRateModal, setShowRateModal] = useState(false);
   const [showRatingModal, setShowRatingModal] = useState(false);
   const [rating, setRating] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -186,6 +188,8 @@ const ClassDisplayScreen = () => {
       user_id: userId,
       rating: rating
     });
+
+    navigate('/userhome', { state: { userId: userId } });
   };
 
   // Function to handle "Yes" click in rate modal
@@ -282,16 +286,16 @@ const ClassDisplayScreen = () => {
             <span
               key={index}
               onClick={() => handleStarClick(index)}
-              style={{ cursor: 'pointer' }}
+              style={{ cursor: 'pointer', marginRight: '5px' }} // Adjust spacing between stars
             >
-              {index < rating ? <BsStarFill /> : <BsStar />}
+              {index < rating ? <BsStarFill style={{ fontSize: '24px' }} /> : <BsStar style={{ fontSize: '24px' }} />} {/* Adjust icon size */}
             </span>
           ))}
         </Modal.Body>
         <Modal.Footer>
           {/* You can add buttons or actions related to rating here */}
           <Button variant="secondary" onClick={handleCloseRatingModal}>
-            Close
+            Submit
           </Button>
         </Modal.Footer>
       </Modal>

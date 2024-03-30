@@ -5,6 +5,7 @@ import LeftNavigation from './LeftNavigation';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { BsStarFill, BsStar } from 'react-icons/bs';
 
 const UserHome = () => {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ const UserHome = () => {
   const [pastClassIds, setPastClassIds] = useState([]);
   const [pastSections, setPastSections] = useState([]);
   const [pastClasses, setPastClasses] = useState([]);
+  const [ratingArray, setRatingArray] = useState([]);
 
   const handleStartClass = () => {
     console.log("START BUTTON IS CLICKED");
@@ -50,6 +52,20 @@ const UserHome = () => {
 
         const resolvedPastSections = await Promise.all(pastSectionsPromises);
         setPastSections(resolvedPastSections);
+
+        const ratingsInfo = classIds.map(async classId => {
+          console.log("GETTING RATING");
+          const classInfoResponse = await axios.post(`http://localhost:5000/gocoachbackend/us-central1/backend/classes/${classId}/getClassRating`, {
+            user_id: userId
+          }
+          );
+          console.log("CLASS INFO RESPONSE", classInfoResponse.data);
+          return classInfoResponse.data.rating;
+        })
+
+        const ratingsSet = await Promise.all(ratingsInfo);
+        console.log("RATING SET", ratingsSet);
+        setRatingArray(ratingsSet);
 
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -112,8 +128,17 @@ const UserHome = () => {
                   <Row className="mb-3">
                     {pastClasses[0] && pastSections[0] && (
                       <Card className="mt-5">
-                        <Card.Header>
+                        <Card.Header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                           <h2>Recent</h2>
+                          {ratingArray[0] && (
+                            <div>
+                              {[...Array(5)].map((_, i) => (
+                                <span key={i}>
+                                  {i < ratingArray[0] ? <BsStarFill /> : <BsStar />}
+                                </span>
+                              ))}
+                            </div>
+                          )}
                         </Card.Header>
                         <Card.Body>
                           <Card.Title>{pastClasses[0].className}</Card.Title>
@@ -139,6 +164,15 @@ const UserHome = () => {
                       <Card className="mt-5">
                         <Card.Header>
                           <h2>Recent</h2>
+                          {ratingArray[1] && (
+                            <div>
+                              {[...Array(5)].map((_, i) => (
+                                <span key={i}>
+                                  {i < ratingArray[1] ? <BsStarFill /> : <BsStar />}
+                                </span>
+                              ))}
+                            </div>
+                          )}
                         </Card.Header>
                         <Card.Body>
                           <Card.Title>{pastClasses[1].className}</Card.Title>

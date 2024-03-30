@@ -12,3 +12,4 @@ classRoutes.get("/classes/:user_id", ClassController.getAllClasses);
 classRoutes.get("/classes/:user_id/getClassForToday", ClassController.getClassForToday);
 classRoutes.get("/classes/:user_id/getPastClasses", ClassController.getPastClasses);
 classRoutes.post("/classes/saveRating/:class_id", ClassController.saveRating);
+classRoutes.post("/classes/:class_id/getClassRating", ClassController.getClassRating);

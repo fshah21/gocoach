@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { getDoc, getFirestore } from "firebase/firestore";
 import { setDoc, doc, collection, Timestamp, getDocs, query, deleteDoc, updateDoc, orderBy, where } from "firebase/firestore"; 
 
 const firebaseConfig = {
@@ -275,5 +275,37 @@ export class ClassController {
           console.error(`Error saving rating: ${error.message}`);
           return res.status(500).send(`Error saving rating: ${error.message}`);
       }
-  }
+    }
+
+    static async getClassRating(req: Request, res: Response) {
+      try {
+        const { class_id } = req.params;
+        const { user_id } = req.body;
+          
+        const classRef = doc(db, 'users', user_id, 'classes', class_id);   
+
+        const classSnapshot = await getDoc(classRef);
+    
+        if (classSnapshot.exists()) {
+          const classData = classSnapshot.data();
+          if (classData && classData.rating !== undefined) {
+              const rating = classData.rating;
+              console.log("Rating:", rating);
+              return res.status(200).json({ 
+                  class_id: class_id,
+                  rating: rating
+              });
+          } else {
+              console.log("No rating found for this class.");
+              return res.status(404).send("No rating found for this class.");
+          }
+      } else {
+          console.log("Class document does not exist.");
+          return res.status(404).send("Class document does not exist.");
+      }
+      } catch (error: any) {
+          console.error(`Error saving rating: ${error.message}`);
+          return res.status(500).send(`Error saving rating: ${error.message}`);
+      }
+    }
 }
