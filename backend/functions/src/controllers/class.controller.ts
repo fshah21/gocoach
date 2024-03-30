@@ -308,4 +308,27 @@ export class ClassController {
           return res.status(500).send(`Error saving rating: ${error.message}`);
       }
     }
+
+    static async addPaymentMethod(req: Request, res: Response) {
+      try {
+        const { class_id } = req.params;
+        const { user_id, card_number, expiry_date, cvv } = req.body;
+    
+        // Reference to the payment methods collection under the user document
+        const paymentMethodsCollectionRef = collection(db, `users/${user_id}/classes/${class_id}/payment_methods`);
+        
+        // Add the payment method data to Firestore
+        const newPaymentMethodRef = doc(paymentMethodsCollectionRef);
+        await setDoc(newPaymentMethodRef, {
+          card_number: card_number,
+          expiry_date: expiry_date,
+          cvv: cvv
+        });
+    
+        return res.status(201).json({ success: true, message: 'Payment method added successfully', paymentMethodId: newPaymentMethodRef.id });
+      } catch (error: any) {
+        console.error(`Error adding payment method: ${error.message}`);
+        return res.status(500).send(`Error adding payment method: ${error.message}`);
+      }
+    }
 }
