@@ -84,118 +84,195 @@ const UserHome = () => {
                 <LeftNavigation userId={userId}/>
                 </Col>
                 <Col md={9} className="p-3">
-                <Row>
-                    {/* Big Card taking up the whole height */}
-                    <Col md={6} className="mb-3">
-                      <div style={{ height: '100%' }}>
-                        {/* Your content for Today's Class Card goes here */}
+                  <Row>
+                      { classInfo && classInfo[0]?.name ? (
+                        <>
+                        {/* Big Card taking up the whole height */}
+                      <Col md={6} className="mb-3">
+                        <div style={{ height: '100%' }}>
+                          {/* Your content for Today's Class Card goes here */}
+                          <Card className="mt-5">
+                          <Card.Header className="d-flex justify-content-between align-items-center">
+                              <h2>Today's Class</h2>
+                              <button className="btn btn-primary" onClick={() => handleStartClass(classInfo)}>
+                                START
+                              </button>
+                            </Card.Header>
+                            <Card.Body>
+                              {classInfo && (
+                                <>
+                                  <Card.Title>{classInfo.className}</Card.Title>
+                                  <Card.Text>{classInfo.classDescription}</Card.Text>
+                                </>
+                              )}
+
+                              {sections && (
+                                <ListGroup variant="flush">
+                                  {sections.map(section => (
+                                    <ListGroup.Item key={section.sectionId}>
+                                      <h5 className='fw-bold'>{section.name} | {`${section.startTime} - ${section.finishTime}`} Mins </h5> 
+                                      <p>{section.displayText}</p>
+                                      <p>{section.coachNotes}</p>
+                                    </ListGroup.Item>
+                                  ))}
+                                </ListGroup>
+                              )}
+                            </Card.Body>
+                          </Card>
+                          {/* Big Card content */}
+                        </div>
+                      </Col>
+
+                      {/* Recent Cards */}
+                      <Col md={6}>
+                      <Row>
+                    {/* First Recent Card */}
+                    <Row className="mb-3">
+                      {pastClasses[0] && pastSections[0] && (
                         <Card className="mt-5">
-                        <Card.Header className="d-flex justify-content-between align-items-center">
-                            <h2>Today's Class</h2>
-                            <button className="btn btn-primary" onClick={() => handleStartClass(classInfo)}>
-                              START
-                            </button>
+                          <Card.Header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <h2>Recent</h2>
+                            {ratingArray[0] && (
+                              <div>
+                                {[...Array(5)].map((_, i) => (
+                                  <span key={i}>
+                                    {i < ratingArray[0] ? <BsStarFill /> : <BsStar />}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
                           </Card.Header>
                           <Card.Body>
-                            {classInfo && (
-                              <>
-                                <Card.Title>{classInfo.className}</Card.Title>
-                                <Card.Text>{classInfo.classDescription}</Card.Text>
-                              </>
-                            )}
+                            <Card.Title>{pastClasses[0].className}</Card.Title>
+                            <Card.Text>{pastClasses[0].classDescription}</Card.Text>
 
-                            {sections && (
-                              <ListGroup variant="flush">
-                                {sections.map(section => (
-                                  <ListGroup.Item key={section.sectionId}>
-                                    <h5 className='fw-bold'>{section.name} | {`${section.startTime} - ${section.finishTime}`} Mins </h5> 
-                                    <p>{section.displayText}</p>
-                                    <p>{section.coachNotes}</p>
-                                  </ListGroup.Item>
-                                ))}
-                              </ListGroup>
-                            )}
+                            <ListGroup variant="flush">
+                              {pastSections[0].map(section => (
+                                <ListGroup.Item key={section.sectionId}>
+                                  <h5 className='fw-bold'>{section.name} | {`${section.startTime} - ${section.finishTime}`} Mins </h5>
+                                  <p>{section.displayText}</p>
+                                  <p>{section.coachNotes}</p>
+                                </ListGroup.Item>
+                              ))}
+                            </ListGroup>
                           </Card.Body>
                         </Card>
-                        {/* Big Card content */}
-                      </div>
-                    </Col>
+                      )}
+                    </Row>
 
-                    {/* Recent Cards */}
-                    <Col md={6}>
+                    {/* Second Recent Card */}
                     <Row>
-                  {/* First Recent Card */}
-                  <Row className="mb-3">
-                    {pastClasses[0] && pastSections[0] && (
-                      <Card className="mt-5">
-                        <Card.Header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <h2>Recent</h2>
-                          {ratingArray[0] && (
-                            <div>
-                              {[...Array(5)].map((_, i) => (
-                                <span key={i}>
-                                  {i < ratingArray[0] ? <BsStarFill /> : <BsStar />}
-                                </span>
+                      {pastClasses[1] && pastSections[1] && (
+                        <Card className="mt-5">
+                          <Card.Header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <h2>Recent</h2>
+                            {ratingArray[1] && (
+                              <div>
+                                {[...Array(5)].map((_, i) => (
+                                  <span key={i}>
+                                    {i < ratingArray[1] ? <BsStarFill /> : <BsStar />}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+                          </Card.Header>
+                          <Card.Body>
+                            <Card.Title>{pastClasses[1].className}</Card.Title>
+                            <Card.Text>{pastClasses[1].classDescription}</Card.Text>
+
+                            <ListGroup variant="flush">
+                              {pastSections[1].map(section => (
+                                <ListGroup.Item key={section.sectionId}>
+                                  <h5 className='fw-bold'>{section.name} | {`${section.startTime} - ${section.finishTime}`} Mins </h5>
+                                  <p>{section.displayText}</p>
+                                  <p>{section.coachNotes}</p>
+                                </ListGroup.Item>
                               ))}
-                            </div>
-                          )}
-                        </Card.Header>
-                        <Card.Body>
-                          <Card.Title>{pastClasses[0].className}</Card.Title>
-                          <Card.Text>{pastClasses[0].classDescription}</Card.Text>
-
-                          <ListGroup variant="flush">
-                            {pastSections[0].map(section => (
-                              <ListGroup.Item key={section.sectionId}>
-                                <h5 className='fw-bold'>{section.name} | {`${section.startTime} - ${section.finishTime}`} Mins </h5>
-                                <p>{section.displayText}</p>
-                                <p>{section.coachNotes}</p>
-                              </ListGroup.Item>
-                            ))}
-                          </ListGroup>
-                        </Card.Body>
-                      </Card>
-                    )}
+                            </ListGroup>
+                          </Card.Body>
+                        </Card>
+                      )}
+                    </Row>
                   </Row>
+                      </Col>
+                        </>
 
-                  {/* Second Recent Card */}
-                  <Row>
-                    {pastClasses[1] && pastSections[1] && (
-                      <Card className="mt-5">
-                        <Card.Header>
-                          <h2>Recent</h2>
-                          {ratingArray[1] && (
-                            <div>
-                              {[...Array(5)].map((_, i) => (
-                                <span key={i}>
-                                  {i < ratingArray[1] ? <BsStarFill /> : <BsStar />}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                        </Card.Header>
-                        <Card.Body>
-                          <Card.Title>{pastClasses[1].className}</Card.Title>
-                          <Card.Text>{pastClasses[1].classDescription}</Card.Text>
+                      ) : (
+                        <>
+                          <Row>
+                            <Col md={5}>
+                              {pastClasses[0] && pastSections[0] && (
+                                <Card className="mt-5">
+                                  <Card.Header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <h2>Recent</h2>
+                                    {ratingArray[0] && (
+                                      <div>
+                                        {[...Array(5)].map((_, i) => (
+                                          <span key={i}>
+                                            {i < ratingArray[0] ? <BsStarFill /> : <BsStar />}
+                                          </span>
+                                        ))}
+                                      </div>
+                                    )}
+                                  </Card.Header>
+                                  <Card.Body>
+                                    <Card.Title>{pastClasses[0].className}</Card.Title>
+                                    <Card.Text>{pastClasses[0].classDescription}</Card.Text>
 
-                          <ListGroup variant="flush">
-                            {pastSections[1].map(section => (
-                              <ListGroup.Item key={section.sectionId}>
-                                <h5 className='fw-bold'>{section.name} | {`${section.startTime} - ${section.finishTime}`} Mins </h5>
-                                <p>{section.displayText}</p>
-                                <p>{section.coachNotes}</p>
-                              </ListGroup.Item>
-                            ))}
-                          </ListGroup>
-                        </Card.Body>
-                      </Card>
-                    )}
+                                    <ListGroup variant="flush">
+                                      {pastSections[0].map(section => (
+                                        <ListGroup.Item key={section.sectionId}>
+                                          <h5 className='fw-bold'>{section.name} | {`${section.startTime} - ${section.finishTime}`} Mins </h5>
+                                          <p>{section.displayText}</p>
+                                          <p>{section.coachNotes}</p>
+                                        </ListGroup.Item>
+                                      ))}
+                                    </ListGroup>
+                                  </Card.Body>
+                                </Card>
+                              )}
+                            </Col>
+
+                            <Col md={5}>
+                              {pastClasses[1] && pastSections[1] && (
+                                <Card className="mt-5">
+                                  <Card.Header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <h2>Recent</h2>
+                                    {ratingArray[1] && (
+                                      <div>
+                                        {[...Array(5)].map((_, i) => (
+                                          <span key={i}>
+                                            {i < ratingArray[1] ? <BsStarFill /> : <BsStar />}
+                                          </span>
+                                        ))}
+                                      </div>
+                                    )}
+                                  </Card.Header>
+                                  <Card.Body>
+                                    <Card.Title>{pastClasses[1].className}</Card.Title>
+                                    <Card.Text>{pastClasses[1].classDescription}</Card.Text>
+
+                                    <ListGroup variant="flush">
+                                      {pastSections[1].map(section => (
+                                        <ListGroup.Item key={section.sectionId}>
+                                          <h5 className='fw-bold'>{section.name} | {`${section.startTime} - ${section.finishTime}`} Mins </h5>
+                                          <p>{section.displayText}</p>
+                                          <p>{section.coachNotes}</p>
+                                        </ListGroup.Item>
+                                      ))}
+                                    </ListGroup>
+                                  </Card.Body>
+                                </Card>
+                              )}
+                            </Col>
+                          </Row>
+                        </>
+                      )
+                    }
+                      
                   </Row>
-                </Row>
-              </Col>
+                </Col>
             </Row>
-          </Col>
-        </Row>
         </Container>
     </>
   );
