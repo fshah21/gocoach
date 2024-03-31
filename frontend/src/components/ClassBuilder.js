@@ -6,6 +6,9 @@ import LeftNavigation from './LeftNavigation';
 import { useSelector } from 'react-redux';
 import 'react-datepicker/dist/react-datepicker.css';
 import axios from "axios";
+import 'froala-editor/css/froala_style.min.css';
+import 'froala-editor/css/froala_editor.pkgd.min.css';
+import FroalaEditorComponent from 'react-froala-wysiwyg';
 
 const ClassBuilder = () => {
   const userId = useSelector(state => state.user.userId);
@@ -15,6 +18,7 @@ const ClassBuilder = () => {
   const [duration, setDuration] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [classId, setClassId] = useState('');
+  const [model, setModel] = useState("Example Set");
   const [sectionData, setSectionData] = useState({
     sectionName: '',
     startTime: '',
@@ -61,6 +65,14 @@ const ClassBuilder = () => {
       ...sectionData,
       toggleTimer: toggleTimer
     });
+  };
+
+  const handleModelChange = (field, event) =>{
+    setModel(event);
+    setSectionData({
+      ...sectionData,
+      [field]: event
+    })
   };
 
   const handlePrepTimeToggle = () => {
@@ -630,26 +642,20 @@ const ClassBuilder = () => {
                 onChange={handleSectionInputChange}
               />
             </Form.Group>
-            <Form.Group controlId="displayText">
+            <Form.Group controlId="displayText" className="mt-2">
               <Form.Label>Display Text:</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                name="displayText"
-                value={sectionData.displayText}
-                onChange={handleSectionInputChange}
+              <FroalaEditorComponent 
+                  tag='textarea'
+                  onModelChange={ (e) => handleModelChange("displayText", e)}
               />
             </Form.Group>
-            <Form.Group controlId="coachesNotes">
-              <Form.Label>Coach's Notes:</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                name="coachesNotes"
-                value={sectionData.coachesNotes}
-                onChange={handleSectionInputChange}
-              />
-            </Form.Group>
+            <Form.Group controlId="coachesNotes" className="mt-2">
+              <Form.Label>Coaches Notes:</Form.Label>
+              <FroalaEditorComponent 
+                  tag='textarea'
+                  onModelChange={(e) => handleModelChange("coachesNotes", e)}
+                />
+              </Form.Group>
             <br/>
             <Form.Group controlId="toggleTimer">
               <Form.Check
