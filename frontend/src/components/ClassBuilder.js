@@ -426,30 +426,28 @@ const ClassBuilder = () => {
                                 <Col md={3}>
                                   <div className="editable-field">
                                     <strong>DISPLAY TEXT:</strong> {editIndex === index ? (
-                                      <Form.Control
+                                      <textarea
                                         value={editingSection.displayText}
-                                        as="textarea"
                                         rows={3}
                                         onChange={(e) => handleEditField('displayText', e.target.value)}
                                       />
                                     ) : (
-                                      <Form.Control as="textarea" rows={6} value={section.displayText} onChange={(e) => handleEditField('displayText', e.target.value)} readOnly/> 
+                                      <textarea rows={6} value={section.displayText} onChange={(e) => handleEditField('displayText', e.target.value)} readOnly/> 
                                     )}
                                   </div>
-                                </Col>
-                                <Col md={3}>
-                                  <div className="editable-field">
-                                    <strong>COACH NOTES:</strong> {editIndex === index ? (
-                                      <Form.Control
-                                        value={editingSection.coachNotes}
-                                        as="textarea"
-                                        rows={3}
-                                        onChange={(e) => handleEditField('coachNotes', e.target.value)}
-                                      />
-                                    ) : (
-                                      <Form.Control as="textarea" rows={6} value={section.coachNotes} onChange={(e) => handleEditField('coachNotes', e.target.value)} readOnly/> 
-                                    )}
-                                  </div>
+                                  <Col md={3}>
+                                    <div className="editable-field">
+                                      <strong>COACH NOTES:</strong> {editIndex === index ? (
+                                        <textarea
+                                          value={editingSection.coachNotes}
+                                          rows={3}
+                                          onChange={(e) => handleEditField('coachNotes', e.target.value)}
+                                        />
+                                      ) : (
+                                        <textarea rows={6} value={section.coachNotes} onChange={(e) => handleEditField('coachNotes', e.target.value)} readOnly/> 
+                                      )}
+                                    </div>
+                                  </Col>
                                 </Col>
                                 <Col md={3}>
                                   <div className="editable-field">
@@ -644,18 +642,20 @@ const ClassBuilder = () => {
             </Form.Group>
             <Form.Group controlId="displayText" className="mt-2">
               <Form.Label>Display Text:</Form.Label>
-              <FroalaEditorComponent 
-                  tag='textarea'
-                  onModelChange={ (e) => handleModelChange("displayText", e)}
+              <textarea
+                className="form-control"
+                value={sectionData.displayText}
+                onChange={(e) => handleModelChange("displayText", e.target.value)}
               />
             </Form.Group>
             <Form.Group controlId="coachesNotes" className="mt-2">
               <Form.Label>Coaches Notes:</Form.Label>
-              <FroalaEditorComponent 
-                  tag='textarea'
-                  onModelChange={(e) => handleModelChange("coachesNotes", e)}
-                />
-              </Form.Group>
+              <textarea
+                className="form-control"
+                value={sectionData.coachesNotes}
+                onChange={(e) => handleModelChange("coachesNotes", e.target.value)}
+              />
+            </Form.Group>
             <br/>
             <Form.Group controlId="toggleTimer">
               <Form.Check

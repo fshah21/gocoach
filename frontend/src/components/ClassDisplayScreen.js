@@ -30,6 +30,7 @@ const ClassDisplayScreen = () => {
   const [showRateModal, setShowRateModal] = useState(false);
   const [showRatingModal, setShowRatingModal] = useState(false);
   const [rating, setRating] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -125,7 +126,7 @@ const ClassDisplayScreen = () => {
 
   useEffect(() => {
     let interval;
-    if (isRunning) {
+    if (isRunning && !isPaused) {
       interval = setInterval(() => {
         if (timer.seconds === 59) {
           timer.minutes = timer.minutes + 1;
@@ -211,6 +212,29 @@ const ClassDisplayScreen = () => {
     console.log("STAR INDEX + 1", starIndex);
   };
 
+  const handlePause = () => {
+    setIsPaused(true);
+    setIsRunning(false);
+  };
+
+  const handleResume = () => {
+    setIsPaused(false);
+    setIsRunning(true);
+  };
+  
+  // In the timer interval useEffect, add a condition to check if the timer is paused
+  useEffect(() => {
+    let interval;
+    if (isRunning && !isPaused) {
+      interval = setInterval(() => {
+        // Timer logic remains the same
+      }, 1000);
+    }
+  
+    return () => clearInterval(interval);
+  }, [isRunning, isPaused, timer]);
+
+
   return (
     <Container>
       <p>Class Display Screen</p>
@@ -252,6 +276,16 @@ const ClassDisplayScreen = () => {
                   <p className='ml-0'>{currentSection.coachNotes}</p>
                 </Col>
               </Row>
+              {isRunning ? (
+                    <Button variant="success" onClick={handlePause}>
+                      Pause
+                    </Button>
+                  ) : (
+                    <Button variant="success" onClick={handleResume}>
+                      Play
+                    </Button>
+                  )}
+
               <CustomProgressBar className="mt-5" sections={sections} classDuration={classDuration} classDurationSeconds={classDurationSeconds} timerSeconds={timerSeconds}/>
             </div>
           )}
