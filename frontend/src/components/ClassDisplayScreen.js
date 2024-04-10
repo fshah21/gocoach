@@ -3,11 +3,12 @@ import { Container, Modal, Row, Col, Button } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import axios from "axios";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar as farStar } from '@fortawesome/free-regular-svg-icons';
 import CustomProgressBar from './CustomProgressBar';
 import { BsStarFill, BsStar } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
+import { faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const ClassDisplayScreen = () => {
   const userId = useSelector(state => state.user.userId);
@@ -237,7 +238,7 @@ const ClassDisplayScreen = () => {
 
   return (
     <Container>
-      <p>Class Display Screen</p>
+      <p>Class Display Screen Is Here</p>
       {classId && (
         <div style={{ textAlign: 'center' }}>
           <p style={{ fontSize: '8rem' }}>{`${timer.hours
@@ -246,16 +247,6 @@ const ClassDisplayScreen = () => {
             .toString()
             .padStart(2, '0')}`}</p>
           <hr style={{ width: '100%', margin: '20px auto', border: '2px solid black'}} />
-
-          {!isRunning ? (
-            <Button variant="success" onClick={handleStart}>
-              Start
-            </Button>
-          ) : (
-            <Button variant="danger" onClick={handleStop}>
-              Stop
-            </Button>
-          )}
           
           {showProgressBar && currentSection && ( // Conditional rendering of ProgressBar and Current Section
             <div className='mt-5'>
@@ -276,17 +267,16 @@ const ClassDisplayScreen = () => {
                   <p className='ml-0'>{currentSection.coachNotes}</p>
                 </Col>
               </Row>
-              {isRunning ? (
-                    <Button variant="success" onClick={handlePause}>
-                      Pause
-                    </Button>
-                  ) : (
-                    <Button variant="success" onClick={handleResume}>
-                      Play
-                    </Button>
-                  )}
-
-              <CustomProgressBar className="mt-5" sections={sections} classDuration={classDuration} classDurationSeconds={classDurationSeconds} timerSeconds={timerSeconds}/>
+              <Row>
+                <Col md={1}>
+                  <Button variant="success" onClick={isRunning ? handlePause : handleResume}>
+                    {isRunning ? <FontAwesomeIcon icon={faPause} /> : <FontAwesomeIcon icon={faPlay} />}
+                  </Button>
+                </Col>
+                <Col md={11}>
+                  <CustomProgressBar className="mt-5" sections={sections} classDuration={classDuration} classDurationSeconds={classDurationSeconds} timerSeconds={timerSeconds}/>
+                </Col>
+              </Row>
             </div>
           )}
         </div>
