@@ -290,26 +290,32 @@ const ClassDisplayScreen = () => {
                   <p className='ml-0'>{currentSection.coachNotes}</p>
                 </Col>
               </Row>
-              <Row>
-                <Col md={1}>
-                  <Button variant="success" onClick={isRunning ? handlePause : handleResume}>
-                    {isRunning ? <FontAwesomeIcon icon={faPause} /> : <FontAwesomeIcon icon={faPlay} />}
-                  </Button>
-                </Col>
-                <Col md={11}>
-                  <CustomProgressBar className="mt-5" sections={sections} classDuration={classDuration} classDurationSeconds={classDurationSeconds} timerSeconds={timerSeconds}/>
-                </Col>
-              </Row>
-              <Row>
-                <Col md={6} className='text-left'>
-                  <h3>Time Remaining in Section:</h3>
-                  <p>{`${Math.floor(calculateRemainingTimeInSection() / 60)} minutes ${calculateRemainingTimeInSection() % 60} seconds`}</p>
-                </Col>
-                <Col md={6} className='text-left'>
-                  <h3>Total Remaining Time:</h3>
-                  <p>{`${Math.floor(calculateTotalRemainingTime() / 3600)} hours ${Math.floor((calculateTotalRemainingTime() % 3600) / 60)} minutes ${calculateTotalRemainingTime() % 60} seconds`}</p>
-                </Col>
-              </Row>
+              <Row className="align-items-center">
+              <Col md={1}>
+                <Button variant="success" onClick={isRunning ? handlePause : handleResume}>
+                  {isRunning ? <FontAwesomeIcon icon={faPause} /> : <FontAwesomeIcon icon={faPlay} />}
+                </Button>
+              </Col>
+              <Col md={8}>
+                <CustomProgressBar className="mt-5" sections={sections} classDuration={classDuration} classDurationSeconds={classDurationSeconds} timerSeconds={timerSeconds}/>
+              </Col>
+              <Col md={3}>
+                <div className="border p-3">
+                  <Row>
+                    <Col>
+                      <p className='mb-0'>Time Remaining in Section</p>
+                      <p>{`${Math.floor(calculateRemainingTimeInSection() / 3600).toString().padStart(2, '0')}:${Math.floor((calculateRemainingTimeInSection() % 3600) / 60).toString().padStart(2, '0')}:${(calculateRemainingTimeInSection() % 60).toString().padStart(2, '0')}`}</p>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col>
+                      <p className='mb-0'>Remaining Time</p>
+                      <p className='mb-0'>{`${Math.floor(calculateTotalRemainingTime() / 3600)}:${Math.floor((calculateTotalRemainingTime() % 3600) / 60).toString().padStart(2, '0')}:${(calculateTotalRemainingTime() % 60).toString().padStart(2, '0')}`}</p>
+                    </Col>
+                  </Row>
+                </div>
+              </Col>
+            </Row>
             </div>
           )}
         </div>
