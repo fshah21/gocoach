@@ -125,6 +125,29 @@ const ClassDisplayScreen = () => {
     handleShowRateModal();
   };
 
+  const calculateRemainingTimeInSection = () => {
+    if (currentSection) {
+      const currentTimeInSeconds = timer.hours * 3600 + timer.minutes * 60 + timer.seconds;
+      const sectionStartTimeInSeconds = parseInt(currentSection.startTime) * 60;
+      const sectionEndTimeInSeconds = parseInt(currentSection.finishTime) * 60;
+      
+      if (currentTimeInSeconds < sectionStartTimeInSeconds) {
+        // If current time is before the section start time
+        return sectionStartTimeInSeconds - currentTimeInSeconds;
+      } else if (currentTimeInSeconds >= sectionStartTimeInSeconds && currentTimeInSeconds < sectionEndTimeInSeconds) {
+        // If current time is within the section
+        return sectionEndTimeInSeconds - currentTimeInSeconds;
+      }
+    }
+    return 0; // Default value if no current section or section not started yet
+  };
+  
+  // Calculate the total remaining time for the class
+  const calculateTotalRemainingTime = () => {
+    const currentTimeInSeconds = timer.hours * 3600 + timer.minutes * 60 + timer.seconds;
+    return classDurationSeconds - currentTimeInSeconds;
+  };  
+
   useEffect(() => {
     let interval;
     if (isRunning && !isPaused) {
@@ -275,6 +298,16 @@ const ClassDisplayScreen = () => {
                 </Col>
                 <Col md={11}>
                   <CustomProgressBar className="mt-5" sections={sections} classDuration={classDuration} classDurationSeconds={classDurationSeconds} timerSeconds={timerSeconds}/>
+                </Col>
+              </Row>
+              <Row>
+                <Col md={6} className='text-left'>
+                  <h3>Time Remaining in Section:</h3>
+                  <p>{`${Math.floor(calculateRemainingTimeInSection() / 60)} minutes ${calculateRemainingTimeInSection() % 60} seconds`}</p>
+                </Col>
+                <Col md={6} className='text-left'>
+                  <h3>Total Remaining Time:</h3>
+                  <p>{`${Math.floor(calculateTotalRemainingTime() / 3600)} hours ${Math.floor((calculateTotalRemainingTime() % 3600) / 60)} minutes ${calculateTotalRemainingTime() % 60} seconds`}</p>
                 </Col>
               </Row>
             </div>
