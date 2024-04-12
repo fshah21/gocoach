@@ -32,6 +32,8 @@ const ClassDisplayScreen = () => {
   const [showRatingModal, setShowRatingModal] = useState(false);
   const [rating, setRating] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [isPresetMode, setIsPresetMode] = useState(true);
+  const [customTimerValue, setCustomTimerValue] = useState(null); // State to store custom timer value
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -307,6 +309,20 @@ const ClassDisplayScreen = () => {
     }
   };
 
+  const toggleMode = () => {
+    setIsPresetMode(prevMode => !prevMode);
+    if (isPresetMode) {
+      // Store the current timer value when switching to custom mode
+      setCustomTimerValue({ ...timer });
+      setTimer({ hours: 0, minutes: 0, seconds: 0 });
+      handlePause(); // Pause the timer when switching to custom mode
+    } else {
+      if (customTimerValue) {
+        // If there's a stored timer value, use it when switching back to preset mode
+        setTimer({ ...customTimerValue });
+      }
+    }
+  };
 
   return (
     <Container>
@@ -320,7 +336,15 @@ const ClassDisplayScreen = () => {
             .padStart(2, '0')}`}</p>
           <hr style={{ width: '100%', margin: '20px auto', border: '2px solid black'}} />
 
-          <Button onClick={handleSkipSection}>
+          <Button onClick={toggleMode}>
+            {isPresetMode ? "Switch to Custom Mode" : "Switch to Preset Mode"}
+          </Button>
+
+          <br/>
+
+          {isPresetMode ? (
+            <>
+            <Button onClick={handleSkipSection} className='mt-5'>
             Skip This Section
           </Button>
           
@@ -371,6 +395,13 @@ const ClassDisplayScreen = () => {
             </Row>
             </div>
           )}
+            </>
+          ) : (
+            <>
+            <p>This is custom mode</p>
+            </>
+          )}
+
         </div>
       )}
 
