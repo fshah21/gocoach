@@ -644,6 +644,7 @@ const ClassBuilder = () => {
               <Form.Label>Display Text:</Form.Label>
               <textarea
                 className="form-control"
+                style={{ whiteSpace: "pre-wrap" }}
                 value={sectionData.displayText}
                 onChange={(e) => handleModelChange("displayText", e.target.value)}
               />

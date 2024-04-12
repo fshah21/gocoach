@@ -111,8 +111,14 @@ const UserHome = () => {
                                   {sections.map(section => (
                                     <ListGroup.Item key={section.sectionId}>
                                       <h5 className='fw-bold'>{section.name} | {`${section.startTime} - ${section.finishTime}`} Mins </h5> 
-                                      <p>{section.displayText}</p>
-                                      <p>{section.coachNotes}</p>
+                                      <div>
+                                        <p className='fw-bold mt-3'>Display Text :</p>
+                                        <textarea readOnly rows={3} style={{ border: 'none', resize: 'none', marginBottom: '10px' }}>{section.displayText}</textarea>
+                                      </div>
+                                      <div>
+                                        <p className='fw-bold mt-3'>Coaches notes :</p>
+                                        <textarea readOnly rows={3} style={{ border: 'none', resize: 'none' }}>{section.coachNotes}</textarea>
+                                      </div>
                                     </ListGroup.Item>
                                   ))}
                                 </ListGroup>

@@ -282,12 +282,12 @@ const ClassDisplayScreen = () => {
               </Row>
               <Row className='mb-5'>
                 <Col md={6}>
-                  <p>DISPLAY TEXT</p>
-                  <p className='text-left'>{currentSection.displayText}</p>
+                  <p  className='text-left'>DISPLAY TEXT</p>
+                  <textarea readOnly rows={3} style={{ border: 'none', resize: 'none', marginBottom: '10px' }} className='text-left'>{currentSection.displayText}</textarea>
                 </Col>
                 <Col md={6}>
-                  <p>COACHES NOTES</p>
-                  <p className='ml-0'>{currentSection.coachNotes}</p>
+                  <p  className='text-left'>COACHES NOTES</p>
+                  <textarea readOnly rows={3} style={{ border: 'none', resize: 'none', marginBottom: '10px' }}  className='text-left'>{currentSection.coachNotes}</textarea>
                 </Col>
               </Row>
               <Row className="align-items-center">
