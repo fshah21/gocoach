@@ -9,6 +9,7 @@ import { BsStarFill, BsStar } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
 import { faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import CustomMode from './CustomMode';
 
 const ClassDisplayScreen = () => {
   const userId = useSelector(state => state.user.userId);
@@ -33,6 +34,13 @@ const ClassDisplayScreen = () => {
   const [rating, setRating] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [isPresetMode, setIsPresetMode] = useState(true);
+  const [timeInSeconds, setTimeInSeconds] = useState(0);
+  const [timerId, setTimerId] = useState(null);
+  const [isRunningCustom, setIsRunningCustom] = useState(false);
+  const [exerciseTime, setExerciseTime] = useState(0);
+  const [exerciseHours, setExerciseHours] = useState(0);
+  const [exerciseMinutes, setExerciseMinutes] = useState(0);
+  const [exerciseSeconds, setExerciseSeconds] = useState(0);
   const [customTimerValue, setCustomTimerValue] = useState(null); // State to store custom timer value
   const navigate = useNavigate();
 
@@ -152,7 +160,7 @@ const ClassDisplayScreen = () => {
 
   useEffect(() => {
     let interval;
-    if (isRunning && !isPaused) {
+    if (isRunning && !isPaused && isPresetMode) {
       interval = setInterval(() => {
         if (timer.seconds === 59) {
           timer.minutes = timer.minutes + 1;
@@ -180,6 +188,45 @@ const ClassDisplayScreen = () => {
         const currentProgress = (timer.hours * 3600 + timer.minutes * 60 + timer.seconds) / totalSeconds;
         setProgress(currentProgress);
   
+        // Update the state
+        setTimer(newTimer);
+      }, 1000);
+    }
+
+    if (isRunning && !isPaused && !isPresetMode) {
+      interval = setInterval(() => {
+        if (timer.seconds === 0) {
+          if (timer.minutes === 0 && timer.hours === 0) {
+            // Timer reached zero, stop the timer
+            handleStop();
+            return;
+          }
+          // Decrease hours and reset minutes and seconds
+          timer.hours = timer.hours  > 0 ? timer.hours - 1 : 0;
+          timer.minutes = 59;
+          timer.seconds = 59;
+        } else if (timer.minutes === 0) {
+          // Decrease minutes and reset seconds
+          timer.minutes = 59;
+          timer.seconds = timer.seconds - 1;
+        } else {
+          // Decrease seconds
+          timer.seconds = timer.seconds - 1;
+        }
+        
+        // Update the timer
+        const newTimer = {
+          hours: timer.hours,
+          minutes: timer.minutes,
+          seconds: timer.seconds,
+        };
+    
+        // Calculate progress
+        const totalSeconds = classDuration * 60 * 60;
+        const remainingSeconds = timer.hours * 3600 + timer.minutes * 60 + timer.seconds;
+        const currentProgress = remainingSeconds / totalSeconds;
+        setProgress(currentProgress);
+    
         // Update the state
         setTimer(newTimer);
       }, 1000);
@@ -324,6 +371,43 @@ const ClassDisplayScreen = () => {
     }
   };
 
+  const handleStartCustom = () => {
+    setIsRunning(true);
+    setIsPaused(false);
+  };
+
+  const handlePauseCustom = () => {
+    setIsRunning(false);
+  };
+
+  const handleResetCustom = () => {
+    setIsRunning(false);
+    setTimeInSeconds(0);
+  };
+
+  const handleChangeExerciseTime = (event) => {
+    const value = parseInt(event.target.value);
+    if (!isNaN(value)) {
+      setExerciseTime(value);
+    }
+  };
+
+  const handleStartExercise = () => {
+    setTimer({ hours: exerciseHours, minutes: exerciseMinutes, seconds: exerciseSeconds});
+  };
+
+  const handleChangeExerciseHours = (event) => {
+    setExerciseHours(parseInt(event.target.value));
+  };
+
+  const handleChangeExerciseMinutes = (event) => {
+    setExerciseMinutes(parseInt(event.target.value));
+  };
+
+  const handleChangeExerciseSeconds = (event) => {
+    setExerciseSeconds(parseInt(event.target.value));
+  };
+
   return (
     <Container>
       <p>Class Display Screen Is Here</p>
@@ -398,7 +482,20 @@ const ClassDisplayScreen = () => {
             </>
           ) : (
             <>
-            <p>This is custom mode</p>
+              <div className='mt-5'>
+                <label htmlFor="exerciseHours">Hours: </label>
+                <input type="number" id="exerciseHours" value={exerciseHours} onChange={handleChangeExerciseHours} />
+                <label htmlFor="exerciseMinutes">Minutes: </label>
+                <input type="number" id="exerciseMinutes" value={exerciseMinutes} onChange={handleChangeExerciseMinutes} />
+                <label htmlFor="exerciseSeconds">Seconds: </label>
+                <input type="number" id="exerciseSeconds" value={exerciseSeconds} onChange={handleChangeExerciseSeconds} />
+                <button onClick={handleStartExercise}>Set Timer</button>
+              </div>
+              <div>
+                <button onClick={handleStartCustom}>Start</button>
+                <button onClick={handlePauseCustom}>Pause</button>
+                <button onClick={handleResetCustom}>Reset</button>
+              </div>
             </>
           )}
 
