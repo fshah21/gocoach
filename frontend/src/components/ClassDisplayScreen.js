@@ -195,20 +195,22 @@ const ClassDisplayScreen = () => {
 
     if (isRunning && !isPaused && !isPresetMode) {
       interval = setInterval(() => {
+        if (timer.hours === 0 && timer.minutes === 0 && timer.seconds === 0) {
+          // Timer reached zero, stop the timer
+          handleStop();
+          return;
+        }
         if (timer.seconds === 0) {
-          if (timer.minutes === 0 && timer.hours === 0) {
-            // Timer reached zero, stop the timer
-            handleStop();
-            return;
+          if (timer.minutes === 0 && timer.hours > 0) {
+            // Decrease hours and reset minutes and seconds
+            timer.hours = timer.hours - 1;
+            timer.minutes = 59;
+            timer.seconds = 59;
+          } else if (timer.minutes > 0) {
+            // Decrease minutes and reset seconds
+            timer.minutes = timer.minutes - 1;
+            timer.seconds = 59;
           }
-          // Decrease hours and reset minutes and seconds
-          timer.hours = timer.hours  > 0 ? timer.hours - 1 : 0;
-          timer.minutes = 59;
-          timer.seconds = 59;
-        } else if (timer.minutes === 0) {
-          // Decrease minutes and reset seconds
-          timer.minutes = 59;
-          timer.seconds = timer.seconds - 1;
         } else {
           // Decrease seconds
           timer.seconds = timer.seconds - 1;
@@ -230,8 +232,7 @@ const ClassDisplayScreen = () => {
         // Update the state
         setTimer(newTimer);
       }, 1000);
-    }
-  
+    }    
     return () => clearInterval(interval);
   }, [isRunning, timer, classDuration, classDurationSeconds]);
   
