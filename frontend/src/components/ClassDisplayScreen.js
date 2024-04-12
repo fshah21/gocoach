@@ -258,6 +258,55 @@ const ClassDisplayScreen = () => {
     return () => clearInterval(interval);
   }, [isRunning, isPaused, timer]);
 
+  const handleSkipSection = () => {
+    // Find the index of the current section in the sections array
+    const currentSectionIndex = sections.findIndex(section => section === currentSection);
+  
+    // Check if there's a next section
+    const nextSectionIndex = currentSectionIndex + 1;
+    if(nextSectionIndex === sections.length) {
+      setTimer({
+        hours: Math.floor(classDurationSeconds / 3600),
+        minutes: Math.floor((classDurationSeconds % 3600) / 60),
+        seconds: classDurationSeconds % 60
+      });
+    }
+
+    if (nextSectionIndex < sections.length) {
+      // Calculate the time remaining until the next section's start time
+      const nextSectionStartTime = parseInt(sections[nextSectionIndex].startTime) * 60;
+      console.log("NEXT SECTION START TIME", nextSectionStartTime);
+      const currentTimeInSeconds = timer.hours * 3600 + timer.minutes * 60 + timer.seconds;
+      console.log("CURRENT TIME IN SECONDS", currentTimeInSeconds);
+      // const timeUntilNextSection = nextSectionStartTime - currentTimeInSeconds;
+      // console.log("TIME UNTIL NEXT SECTION", timeUntilNextSection);
+  
+      // Pause the timer until the next section's start time
+      setIsRunning(false);
+      setIsPaused(true);
+  
+      // Update the time remaining in the current section
+      const remainingTimeInCurrentSection = calculateRemainingTimeInSection();
+      console.log("REMAINING TIME IN CURRENT SECTION", remainingTimeInCurrentSection);
+      // Calculate the remaining time for the overall class
+      const totalRemainingTime = calculateTotalRemainingTime();
+      console.log("TOTAL REMAINING TIME", totalRemainingTime);
+  
+      // Update the progress bar
+      const currentProgress = nextSectionStartTime;
+      console.log("CURRENT PROGRESS", currentProgress);
+      setProgress(currentProgress);
+  
+      // Update the state with the new current section and remaining times
+      setCurrentSection(sections[nextSectionIndex]);
+      setTimer({
+        hours: Math.floor(nextSectionStartTime / 3600),
+        minutes: Math.floor((nextSectionStartTime % 3600) / 60),
+        seconds: nextSectionStartTime % 60
+      });
+    }
+  };
+
 
   return (
     <Container>
@@ -270,6 +319,10 @@ const ClassDisplayScreen = () => {
             .toString()
             .padStart(2, '0')}`}</p>
           <hr style={{ width: '100%', margin: '20px auto', border: '2px solid black'}} />
+
+          <Button onClick={handleSkipSection}>
+            Skip This Section
+          </Button>
           
           {showProgressBar && currentSection && ( // Conditional rendering of ProgressBar and Current Section
             <div className='mt-5'>
