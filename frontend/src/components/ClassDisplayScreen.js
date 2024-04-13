@@ -438,7 +438,7 @@ const ClassDisplayScreen = () => {
 
           {isPresetMode ? (
             <>
-            <Button onClick={handleSkipSection} className='mt-3'>
+            <Button variant="success" onClick={handleSkipSection} className='mt-3'>
             Skip This Section
           </Button>
           
