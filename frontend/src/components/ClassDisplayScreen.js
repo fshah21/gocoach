@@ -384,6 +384,7 @@ const ClassDisplayScreen = () => {
   const handleResetCustom = () => {
     setIsRunning(false);
     setTimeInSeconds(0);
+    setTimer({ hours: exerciseHours, minutes: exerciseMinutes, seconds: exerciseSeconds});
   };
 
   const handleChangeExerciseTime = (event) => {
