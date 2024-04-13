@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Modal, Row, Col, Button } from 'react-bootstrap';
+import { Container, Modal, Row, Col, Button, Form } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import axios from "axios";
@@ -421,15 +421,24 @@ const ClassDisplayScreen = () => {
             .padStart(2, '0')}`}</p>
           <hr style={{ width: '100%', margin: '20px auto', border: '2px solid black'}} />
 
-          <Button onClick={toggleMode}>
-            {isPresetMode ? "Switch to Custom Mode" : "Switch to Preset Mode"}
-          </Button>
-
+          <div className="d-flex justify-content-center">
+            <Form className="d-flex align-items-center">
+              <p className="mb-0 mr-2"><span>Preset  </span></p>
+              <Form.Check
+                type="switch"
+                id="mode-switch"
+                checked={!isPresetMode}
+                onChange={() => toggleMode(!isPresetMode)}
+              />
+              <p className="mb-0 ml-2"><span>   Custom</span></p>
+            </Form>
+          </div>
+          
           <br/>
 
           {isPresetMode ? (
             <>
-            <Button onClick={handleSkipSection} className='mt-5'>
+            <Button onClick={handleSkipSection} className='mt-3'>
             Skip This Section
           </Button>
           
