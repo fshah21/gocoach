@@ -430,21 +430,8 @@ const ClassDisplayScreen = () => {
     }
   };
 
-  const displayTextExpandedStyle = {
-    fontSize: displayTextExpanded ? '5rem' : 'inherit',
-    width: displayTextExpanded ? '100%' : 'auto',
-    height: displayTextExpanded ? '100%' : 'auto',
-    overflow: displayTextExpanded ? 'hidden' : 'visible', 
-  };
-
-  const faExpandedStyle = {
-    fontSize: displayTextExpanded ? '50px': '20px',
-    top: displayTextExpanded ? '2px': '5px'
-  }
-
-  const coachNotesExpandedStyle = {
-    fontSize: coachNotesExpanded ? '50rem' : 'inherit', // Set font size to 3rem if expanded, otherwise inherit
-    width: coachNotesExpanded ? '100vw' : 'auto', // Set width to 100vw if expanded, otherwise auto
+  const expandedStyle = {
+    fontSize: displayTextExpanded || coachNotesExpanded ? '3rem' : 'inherit',
   };
 
   return (
@@ -506,12 +493,12 @@ const ClassDisplayScreen = () => {
                   <Row className='mb-5'>
                   {!coachNotesExpanded && (
                       <Col md={6}>
-                        <p className='text-left' style={{ ...displayTextExpandedStyle }}>DISPLAY TEXT</p>
+                        <p className='text-left' style={{...expandedStyle}}>DISPLAY TEXT</p>
                         <div style={{ position: 'relative'}}>
                           <textarea
                             readOnly
                             rows={3}
-                            style={{ border: 'none', resize: 'none', marginBottom: '10px', width: '100%', ...displayTextExpandedStyle }}
+                            style={{ border: 'none', resize: 'none', marginBottom: '10px', width: '100%', ...(displayTextExpanded && { height: 'calc(100vh - 20px)' }), ...expandedStyle }}
                             className='text-left'
                           >
                             {currentSection.displayText}
@@ -519,19 +506,19 @@ const ClassDisplayScreen = () => {
                           <FontAwesomeIcon
                             icon={faExpandArrowsAlt}
                             onClick={() => handleExpand('displayText')}
-                            style={{ position: 'absolute', top: '5px', right: '5px', cursor: 'pointer', zIndex: 1, ...faExpandedStyle }}
+                            style={{ position: 'absolute', top: '5px', right: '5px', cursor: 'pointer', zIndex: 1 }}
                           />
                         </div>
                         </Col>
                     )}
                     {!displayTextExpanded && (
                       <Col md={6}>
-                        <p className='text-left'>COACHES NOTES</p>
+                        <p className='text-left' style={{...expandedStyle}}>COACHES NOTES</p>
                         <div style={{ position: 'relative' }}>
                           <textarea
                             readOnly
                             rows={3}
-                            style={{ border: 'none', resize: 'none', marginBottom: '10px', width: '100%', ...(coachNotesExpanded && { height: 'calc(100vh - 20px)' }) }}
+                            style={{ border: 'none', resize: 'none', marginBottom: '10px', width: '100%', ...(coachNotesExpanded && { height: 'calc(100vh - 20px)' }), ...expandedStyle }}
                             className='text-left'
                           >
                             {currentSection.coachNotes}
