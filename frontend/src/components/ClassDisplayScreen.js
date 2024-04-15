@@ -9,6 +9,7 @@ import { BsStarFill, BsStar } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
 import { faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faExpandArrowsAlt } from '@fortawesome/free-solid-svg-icons';
 import CustomMode from './CustomMode';
 
 const ClassDisplayScreen = () => {
@@ -41,6 +42,9 @@ const ClassDisplayScreen = () => {
   const [exerciseHours, setExerciseHours] = useState(0);
   const [exerciseMinutes, setExerciseMinutes] = useState(0);
   const [exerciseSeconds, setExerciseSeconds] = useState(0);
+  const [expanded, setExpanded] = useState(false);
+  const [displayTextExpanded, setDisplayTextExpanded] = useState(false);
+  const [coachNotesExpanded, setCoachNotesExpanded] = useState(false);
   const [customTimerValue, setCustomTimerValue] = useState(null); // State to store custom timer value
   const navigate = useNavigate();
 
@@ -369,6 +373,7 @@ const ClassDisplayScreen = () => {
         // If there's a stored timer value, use it when switching back to preset mode
         setTimer({ ...customTimerValue });
       }
+      handlePause();
     }
   };
 
@@ -410,19 +415,59 @@ const ClassDisplayScreen = () => {
     setExerciseSeconds(parseInt(event.target.value));
   };
 
+  const handleExpand = (section) => {
+    console.log("HANDLE EXPAND");
+
+    switch (section) {
+      case 'displayText':
+        setDisplayTextExpanded(!displayTextExpanded);
+        break;
+      case 'coachNotes':
+        setCoachNotesExpanded(!coachNotesExpanded);
+        break;
+      default:
+        setExpanded(!expanded);
+    }
+  };
+
+  const displayTextExpandedStyle = {
+    fontSize: displayTextExpanded ? '5rem' : 'inherit',
+    width: displayTextExpanded ? '100%' : 'auto',
+    height: displayTextExpanded ? '100%' : 'auto',
+    overflow: displayTextExpanded ? 'hidden' : 'visible', 
+  };
+
+  const faExpandedStyle = {
+    fontSize: displayTextExpanded ? '50px': '20px',
+    top: displayTextExpanded ? '2px': '5px'
+  }
+
+  const coachNotesExpandedStyle = {
+    fontSize: coachNotesExpanded ? '50rem' : 'inherit', // Set font size to 3rem if expanded, otherwise inherit
+    width: coachNotesExpanded ? '100vw' : 'auto', // Set width to 100vw if expanded, otherwise auto
+  };
+
   return (
     <Container>
-      <p>Class Display Screen Is Here</p>
+      {!displayTextExpanded && !coachNotesExpanded && (
+        <p>Class Display Screen Is Here</p>
+      )}
       {classId && (
         <div style={{ textAlign: 'center' }}>
-          <p style={{ fontSize: '8rem' }}>{`${timer.hours
-            .toString()
-            .padStart(2, '0')}:${timer.minutes.toString().padStart(2, '0')}:${timer.seconds
-            .toString()
-            .padStart(2, '0')}`}</p>
-          <hr style={{ width: '100%', margin: '20px auto', border: '2px solid black'}} />
-
-          <div className="d-flex justify-content-center">
+          {!displayTextExpanded && !coachNotesExpanded && (
+            <p style={{ fontSize: '8rem' }}>{`${timer.hours
+              .toString()
+              .padStart(2, '0')}:${timer.minutes.toString().padStart(2, '0')}:${timer.seconds
+              .toString()
+              .padStart(2, '0')}`}
+            </p>
+          )}
+          {!displayTextExpanded && !coachNotesExpanded && (
+            <hr style={{ width: '100%', margin: '20px auto', border: '2px solid black'}} />
+          )}
+          
+          {!displayTextExpanded && !coachNotesExpanded && (
+            <div className="d-flex justify-content-center">
             <Form className="d-flex align-items-center">
               <p className="mb-0 mr-2"><span>Preset  </span></p>
               <Form.Check
@@ -433,61 +478,102 @@ const ClassDisplayScreen = () => {
               />
               <p className="mb-0 ml-2"><span>   Custom</span></p>
             </Form>
-          </div>
+            </div>
+          )}
           
           <br/>
 
           {isPresetMode ? (
             <>
-            <Button variant="success" onClick={handleSkipSection} className='mt-3'>
-            Skip This Section
-          </Button>
+            {!displayTextExpanded && !coachNotesExpanded && (
+              <Button variant="success" onClick={handleSkipSection} className='mt-3'>
+                Skip This Section
+              </Button>
+            )}
           
           {showProgressBar && currentSection && ( // Conditional rendering of ProgressBar and Current Section
             <div className='mt-5'>
-              <Row>
-                <Col md={6} className='text-left'>
-                  <h3>{currentSection.label} |</h3>
-                </Col>
-                <Col md={6}>
-                </Col>
-              </Row>
-              <Row className='mb-5'>
-                <Col md={6}>
-                  <p  className='text-left'>DISPLAY TEXT</p>
-                  <textarea readOnly rows={3} style={{ border: 'none', resize: 'none', marginBottom: '10px' }} className='text-left'>{currentSection.displayText}</textarea>
-                </Col>
-                <Col md={6}>
-                  <p  className='text-left'>COACHES NOTES</p>
-                  <textarea readOnly rows={3} style={{ border: 'none', resize: 'none', marginBottom: '10px' }}  className='text-left'>{currentSection.coachNotes}</textarea>
-                </Col>
-              </Row>
-              <Row className="align-items-center">
-              <Col md={1}>
-                <Button variant="success" onClick={isRunning ? handlePause : handleResume}>
-                  {isRunning ? <FontAwesomeIcon icon={faPause} /> : <FontAwesomeIcon icon={faPlay} />}
-                </Button>
-              </Col>
-              <Col md={8}>
-                <CustomProgressBar className="mt-5" sections={sections} classDuration={classDuration} classDurationSeconds={classDurationSeconds} timerSeconds={timerSeconds}/>
-              </Col>
-              <Col md={3}>
-                <div className="border p-3">
-                  <Row>
-                    <Col>
-                      <p className='mb-0'>Time Remaining in Section</p>
-                      <p>{`${Math.floor(calculateRemainingTimeInSection() / 3600).toString().padStart(2, '0')}:${Math.floor((calculateRemainingTimeInSection() % 3600) / 60).toString().padStart(2, '0')}:${(calculateRemainingTimeInSection() % 60).toString().padStart(2, '0')}`}</p>
-                    </Col>
+              {!displayTextExpanded && !coachNotesExpanded && (
+                <Row>
+                  <Col md={6} className='text-left'>
+                    <h3>{currentSection.label} |</h3>
+                  </Col>
+                  <Col md={6}>
+                  </Col>
+                </Row>
+              )}
+              <div>
+                  <Row className='mb-5'>
+                  {!coachNotesExpanded && (
+                      <Col md={6}>
+                        <p className='text-left' style={{ ...displayTextExpandedStyle }}>DISPLAY TEXT</p>
+                        <div style={{ position: 'relative'}}>
+                          <textarea
+                            readOnly
+                            rows={3}
+                            style={{ border: 'none', resize: 'none', marginBottom: '10px', width: '100%', ...displayTextExpandedStyle }}
+                            className='text-left'
+                          >
+                            {currentSection.displayText}
+                          </textarea>
+                          <FontAwesomeIcon
+                            icon={faExpandArrowsAlt}
+                            onClick={() => handleExpand('displayText')}
+                            style={{ position: 'absolute', top: '5px', right: '5px', cursor: 'pointer', zIndex: 1, ...faExpandedStyle }}
+                          />
+                        </div>
+                        </Col>
+                    )}
+                    {!displayTextExpanded && (
+                      <Col md={6}>
+                        <p className='text-left'>COACHES NOTES</p>
+                        <div style={{ position: 'relative' }}>
+                          <textarea
+                            readOnly
+                            rows={3}
+                            style={{ border: 'none', resize: 'none', marginBottom: '10px', width: '100%', ...(coachNotesExpanded && { height: 'calc(100vh - 20px)' }) }}
+                            className='text-left'
+                          >
+                            {currentSection.coachNotes}
+                          </textarea>
+                          <FontAwesomeIcon
+                            icon={faExpandArrowsAlt}
+                            onClick={() => handleExpand('coachNotes')}
+                            style={{ position: 'absolute', top: '5px', right: '5px', cursor: 'pointer', zIndex: 1 }}
+                          />
+                        </div>
+                      </Col>
+                    )}
                   </Row>
-                  <Row>
-                    <Col>
-                      <p className='mb-0'>Remaining Time</p>
-                      <p className='mb-0'>{`${Math.floor(calculateTotalRemainingTime() / 3600)}:${Math.floor((calculateTotalRemainingTime() % 3600) / 60).toString().padStart(2, '0')}:${(calculateTotalRemainingTime() % 60).toString().padStart(2, '0')}`}</p>
-                    </Col>
-                  </Row>
-                </div>
-              </Col>
-            </Row>
+              </div>
+              {!displayTextExpanded && !coachNotesExpanded && (
+                <Row className="align-items-center">
+                  <Col md={1}>
+                    <Button variant="success" onClick={isRunning ? handlePause : handleResume}>
+                      {isRunning ? <FontAwesomeIcon icon={faPause} /> : <FontAwesomeIcon icon={faPlay} />}
+                    </Button>
+                  </Col>
+                  <Col md={8}>
+                    <CustomProgressBar className="mt-5" sections={sections} classDuration={classDuration} classDurationSeconds={classDurationSeconds} timerSeconds={timerSeconds}/>
+                  </Col>
+                  <Col md={3}>
+                    <div className="border p-3">
+                      <Row>
+                        <Col>
+                          <p className='mb-0'>Time Remaining in Section</p>
+                          <p>{`${Math.floor(calculateRemainingTimeInSection() / 3600).toString().padStart(2, '0')}:${Math.floor((calculateRemainingTimeInSection() % 3600) / 60).toString().padStart(2, '0')}:${(calculateRemainingTimeInSection() % 60).toString().padStart(2, '0')}`}</p>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col>
+                          <p className='mb-0'>Remaining Time</p>
+                          <p className='mb-0'>{`${Math.floor(calculateTotalRemainingTime() / 3600)}:${Math.floor((calculateTotalRemainingTime() % 3600) / 60).toString().padStart(2, '0')}:${(calculateTotalRemainingTime() % 60).toString().padStart(2, '0')}`}</p>
+                        </Col>
+                      </Row>
+                    </div>
+                  </Col>
+                </Row>
+              )}
             </div>
           )}
             </>
