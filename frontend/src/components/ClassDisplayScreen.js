@@ -46,6 +46,16 @@ const ClassDisplayScreen = () => {
   const [displayTextExpanded, setDisplayTextExpanded] = useState(false);
   const [coachNotesExpanded, setCoachNotesExpanded] = useState(false);
   const [timerExpanded, setTimerExpanded] = useState(false);
+  const [rounds, setRounds] = useState(1);
+  const [timeOnMinutes, setTimeOnMinutes] = useState('');
+  const [timeOnSeconds, setTimeOnSeconds] = useState('');
+  const [timeOffMinutes, setTimeOffMinutes] = useState('');
+  const [timeOffSeconds, setTimeOffSeconds] = useState('');
+  const [prepMinutes, setPrepMinutes] = useState('');
+  const [prepSeconds, setPrepSeconds] = useState('');
+  const [totalWorkoutMinutes, setTotalWorkoutMinutes] = useState('');
+  const [totalWorkoutSeconds, setTotalWorkoutSeconds] = useState('');
+  const [includeLastReset, setIncludeLastReset] = useState(false);
   const [customTimerValue, setCustomTimerValue] = useState(null); // State to store custom timer value
   const navigate = useNavigate();
 
@@ -498,7 +508,7 @@ const ClassDisplayScreen = () => {
               {!displayTextExpanded && !coachNotesExpanded && !timerExpanded && (
                 <Row>
                   <Col md={6} className='text-left'>
-                    <h3>{currentSection.label} |</h3>
+                    <h3>{currentSection.label}</h3>
                   </Col>
                   <Col md={6}>
                   </Col>
@@ -581,20 +591,109 @@ const ClassDisplayScreen = () => {
             </>
           ) : (
             <>
-              <div className='mt-5'>
-                <label htmlFor="exerciseHours">Hours: </label>
-                <input type="number" id="exerciseHours" value={exerciseHours} onChange={handleChangeExerciseHours} />
-                <label htmlFor="exerciseMinutes">Minutes: </label>
-                <input type="number" id="exerciseMinutes" value={exerciseMinutes} onChange={handleChangeExerciseMinutes} />
-                <label htmlFor="exerciseSeconds">Seconds: </label>
-                <input type="number" id="exerciseSeconds" value={exerciseSeconds} onChange={handleChangeExerciseSeconds} />
-                <button onClick={handleStartExercise}>Set Timer</button>
-              </div>
-              <div>
-                <button onClick={handleStartCustom}>Start</button>
-                <button onClick={handlePauseCustom}>Pause</button>
-                <button onClick={handleResetCustom}>Reset</button>
-              </div>
+              <Container className="mt-5">
+                <Row className="justify-content-center">
+                  <Col md={6}>
+                    <Form>
+                      <Form.Group controlId="rounds" className="d-flex align-items-center mt-3">
+                        <Row>
+                          <Col md={9}>
+                            <Form.Label>Number of Rounds</Form.Label>
+                          </Col>
+                          <Col md={3}>
+                            <Form.Control type="number" value={rounds} onChange={(e) => setRounds(e.target.value)} />
+                          </Col>
+                        </Row>
+                      </Form.Group>
+
+                      <Form.Group controlId="timeOn" className="d-flex align-items-center mt-3">
+                        <Row>
+                          <Col md={6}>
+                            <Form.Label>Time On (MM:SS)</Form.Label>
+                          </Col>
+                          <Col md={6}>
+                            <Row>
+                              <Col md={6}>
+                                <Form.Control type="number" placeholder="Minutes" value={timeOnMinutes} onChange={(e) => setTimeOnMinutes(e.target.value)} />
+                              </Col>
+                              <Col md={6}>
+                                <Form.Control type="number" placeholder="Seconds" value={timeOnSeconds} onChange={(e) => setTimeOnSeconds(e.target.value)} />
+                              </Col>
+                            </Row>
+                          </Col>
+                        </Row>
+                      </Form.Group>
+
+                      <Form.Group controlId="timeOff" className="d-flex align-items-center mt-3">
+                        <Row>
+                          <Col md={6}>
+                            <Form.Label>Time Off (MM:SS)</Form.Label>
+                          </Col>
+                          <Col md={6}>
+                            <Row>
+                              <Col md={6}>
+                                <Form.Control type="number" placeholder="Minutes" value={timeOffMinutes} onChange={(e) => setTimeOffMinutes(e.target.value)} />
+                              </Col>
+                              <Col md={6}>
+                                <Form.Control type="number" placeholder="Seconds" value={timeOffSeconds} onChange={(e) => setTimeOffSeconds(e.target.value)} />
+                              </Col>
+                            </Row>
+                          </Col>
+                        </Row>
+                      </Form.Group>
+
+                      <Form.Group controlId="prepTime" className="d-flex align-items-center mt-3">
+                        <Row>
+                          <Col md={6}>
+                            <Form.Label>Prep Time (MM:SS)</Form.Label>
+                          </Col>
+                          <Col md={6}>
+                            <Row>
+                              <Col md={6}>
+                                <Form.Control type="number" placeholder="Minutes" value={prepMinutes} onChange={(e) => setPrepMinutes(e.target.value)} />
+                              </Col>
+                              <Col md={6}>
+                                <Form.Control type="number" placeholder="Seconds" value={prepSeconds} onChange={(e) => setPrepSeconds(e.target.value)} />
+                              </Col>
+                            </Row>
+                          </Col>
+                        </Row>
+                      </Form.Group>
+
+                      <Form.Group controlId="totalWorkoutTime" className="d-flex align-items-center mt-3">
+                        <Row>
+                          <Col md={6}>
+                            <Form.Label>Total Workout Time</Form.Label>
+                          </Col>
+                          <Col md={6}>
+                            <Row>
+                              <Col md={6}>
+                                <Form.Control type="number" placeholder="Minutes" value={totalWorkoutMinutes} onChange={(e) => setTotalWorkoutMinutes(e.target.value)} />
+                              </Col>
+                              <Col md={6}>
+                                <Form.Control type="number" placeholder="Seconds" value={totalWorkoutSeconds} onChange={(e) => setTotalWorkoutSeconds(e.target.value)} />
+                              </Col>
+                            </Row>
+                          </Col>
+                        </Row>
+                      </Form.Group>
+
+                      <Form.Group controlId="includeLastReset" className="d-flex align-items-center mt-3">
+                        <Row>
+                          <Col md={11}>
+                            <Form.Label className="mx-5">Include Last Rest</Form.Label>
+                          </Col>
+                          <Col md={1}>
+                            <Form.Check className="mx-3" type="switch" checked={includeLastReset} onChange={(e) => setIncludeLastReset(e.target.checked)} />
+                          </Col>
+                        </Row>
+                      </Form.Group>
+
+                      <Button variant="primary" onClick={handleStartExercise} className="ml-auto mt-4">Start</Button>
+                    </Form>
+                  </Col>
+                </Row>
+              </Container>
             </>
           )}
 
