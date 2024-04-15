@@ -45,6 +45,7 @@ const ClassDisplayScreen = () => {
   const [expanded, setExpanded] = useState(false);
   const [displayTextExpanded, setDisplayTextExpanded] = useState(false);
   const [coachNotesExpanded, setCoachNotesExpanded] = useState(false);
+  const [timerExpanded, setTimerExpanded] = useState(false);
   const [customTimerValue, setCustomTimerValue] = useState(null); // State to store custom timer value
   const navigate = useNavigate();
 
@@ -425,6 +426,8 @@ const ClassDisplayScreen = () => {
       case 'coachNotes':
         setCoachNotesExpanded(!coachNotesExpanded);
         break;
+      case 'timer':
+        setTimerExpanded(!timerExpanded);
       default:
         setExpanded(!expanded);
     }
@@ -434,26 +437,38 @@ const ClassDisplayScreen = () => {
     fontSize: displayTextExpanded || coachNotesExpanded ? '3rem' : 'inherit',
   };
 
+  const timerExpandedStyle = {
+    fontSize: timerExpanded ? '20rem' : '10rem',
+  };
+
   return (
     <Container>
-      {!displayTextExpanded && !coachNotesExpanded && (
+      {!displayTextExpanded && !coachNotesExpanded && !timerExpanded && (
         <p>Class Display Screen Is Here</p>
       )}
       {classId && (
         <div style={{ textAlign: 'center' }}>
           {!displayTextExpanded && !coachNotesExpanded && (
-            <p style={{ fontSize: '8rem' }}>{`${timer.hours
-              .toString()
-              .padStart(2, '0')}:${timer.minutes.toString().padStart(2, '0')}:${timer.seconds
-              .toString()
-              .padStart(2, '0')}`}
-            </p>
+            <div>
+              <p style={{ fontSize: '8rem', ...timerExpandedStyle }}>{`${timer.hours
+                .toString()
+                .padStart(2, '0')}:${timer.minutes.toString().padStart(2, '0')}:${timer.seconds
+                .toString()
+                .padStart(2, '0')}`}
+              </p>
+              <FontAwesomeIcon
+                icon={faExpandArrowsAlt}
+                onClick={() => handleExpand('timer')}
+                style={{ position: 'absolute', top: '50px', right: '200px', cursor: 'pointer', zIndex: 1 }}
+              />
+            </div>
+
           )}
-          {!displayTextExpanded && !coachNotesExpanded && (
+          {!displayTextExpanded && !coachNotesExpanded && !timerExpanded && (
             <hr style={{ width: '100%', margin: '20px auto', border: '2px solid black'}} />
           )}
           
-          {!displayTextExpanded && !coachNotesExpanded && (
+          {!displayTextExpanded && !coachNotesExpanded && !timerExpanded && (
             <div className="d-flex justify-content-center">
             <Form className="d-flex align-items-center">
               <p className="mb-0 mr-2"><span>Preset  </span></p>
@@ -472,7 +487,7 @@ const ClassDisplayScreen = () => {
 
           {isPresetMode ? (
             <>
-            {!displayTextExpanded && !coachNotesExpanded && (
+            {!displayTextExpanded && !coachNotesExpanded && !timerExpanded && (
               <Button variant="success" onClick={handleSkipSection} className='mt-3'>
                 Skip This Section
               </Button>
@@ -480,7 +495,7 @@ const ClassDisplayScreen = () => {
           
           {showProgressBar && currentSection && ( // Conditional rendering of ProgressBar and Current Section
             <div className='mt-5'>
-              {!displayTextExpanded && !coachNotesExpanded && (
+              {!displayTextExpanded && !coachNotesExpanded && !timerExpanded && (
                 <Row>
                   <Col md={6} className='text-left'>
                     <h3>{currentSection.label} |</h3>
@@ -491,7 +506,7 @@ const ClassDisplayScreen = () => {
               )}
               <div>
                   <Row className='mb-5'>
-                  {!coachNotesExpanded && (
+                  {!coachNotesExpanded && !timerExpanded && (
                       <Col md={6}>
                         <p className='text-left' style={{...expandedStyle}}>DISPLAY TEXT</p>
                         <div style={{ position: 'relative'}}>
@@ -511,7 +526,7 @@ const ClassDisplayScreen = () => {
                         </div>
                         </Col>
                     )}
-                    {!displayTextExpanded && (
+                    {!displayTextExpanded && !timerExpanded && (
                       <Col md={6}>
                         <p className='text-left' style={{...expandedStyle}}>COACHES NOTES</p>
                         <div style={{ position: 'relative' }}>
@@ -533,7 +548,7 @@ const ClassDisplayScreen = () => {
                     )}
                   </Row>
               </div>
-              {!displayTextExpanded && !coachNotesExpanded && (
+              {!displayTextExpanded && !coachNotesExpanded && !timerExpanded && (
                 <Row className="align-items-center">
                   <Col md={1}>
                     <Button variant="success" onClick={isRunning ? handlePause : handleResume}>
