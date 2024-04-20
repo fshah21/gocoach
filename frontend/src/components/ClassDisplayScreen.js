@@ -202,8 +202,14 @@ const ClassDisplayScreen = () => {
   
   // Calculate the total remaining time for the class
   const calculateTotalRemainingTime = () => {
-    const currentTimeInSeconds = timer.hours * 3600 + timer.minutes * 60 + timer.seconds;
-    return classDurationSeconds - currentTimeInSeconds;
+    if(isPresetMode) {
+      const currentTimeInSeconds = timer.hours * 3600 + timer.minutes * 60 + timer.seconds;
+      return classDurationSeconds - currentTimeInSeconds;
+    } else {
+      const currentTimeInSeconds = timer.hours * 3600 + timer.minutes * 60 + timer.seconds;
+      console.log("CURRENT TIME IN SECONDS");
+      return finalCustomSeconds - currentTimeInSeconds;
+    }
   };  
 
   useEffect(() => {
@@ -625,7 +631,7 @@ const ClassDisplayScreen = () => {
                         <div style={{ position: 'relative'}}>
                           <textarea
                             readOnly
-                            rows={3}
+                            rows={5}
                             style={{ border: 'none', resize: 'none', marginBottom: '10px', width: '100%', ...(displayTextExpanded && { height: 'calc(100vh - 20px)' }), ...expandedStyle }}
                             className='text-left'
                           >
@@ -645,7 +651,7 @@ const ClassDisplayScreen = () => {
                         <div style={{ position: 'relative' }}>
                           <textarea
                             readOnly
-                            rows={3}
+                            rows={5}
                             style={{ border: 'none', resize: 'none', marginBottom: '10px', width: '100%', ...(coachNotesExpanded && { height: 'calc(100vh - 20px)' }), ...expandedStyle }}
                             className='text-left'
                           >
