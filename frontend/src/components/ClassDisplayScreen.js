@@ -12,11 +12,13 @@ import { faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExpandArrowsAlt } from '@fortawesome/free-solid-svg-icons';
 import CustomMode from './CustomMode';
+import beepSound from './beep.wav';
 
 const ClassDisplayScreen = () => {
   const userId = useSelector(state => state.user.userId);
   const location = useLocation();
   const classInfo = location.state?.classId;
+  const beepAudio = new Audio(beepSound);
 
   // Use state to manage the class variables
   const [classId, setClassId] = useState(null);
@@ -80,6 +82,17 @@ const ClassDisplayScreen = () => {
   
     fetchData();
   }, [classInfo, classDuration, timer]);
+
+  useEffect(() => {
+      // Play beep sound every time the timer is updated
+      beepAudio.play();
+
+      return () => {
+        // Clean up audio playback when component unmounts
+        beepAudio.pause();
+        beepAudio.currentTime = 0;
+      };
+  }, [timer]); // Trigger effect whenever the timer changes
 
   useEffect(() => {
     const fetchData = async () => {
