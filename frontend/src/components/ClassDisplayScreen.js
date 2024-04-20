@@ -64,6 +64,7 @@ const ClassDisplayScreen = () => {
   const [customStart, setCustomStart] = useState(false);
   const [customSections, setCustomSections] = useState([]);
   const [customModeEnd, setCustomModeEnd] = useState(false); 
+  const [countDirectionCustom, setCountDirectionCustom] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -536,8 +537,14 @@ const ClassDisplayScreen = () => {
     const totalSeconds = timeSeconds + prepSecondsFinal;
     console.log("TOTAL SECONDS", totalSeconds);
 
-    const totalRoundsSeconds = rounds * totalSeconds;
+    var totalRoundsSeconds = rounds * totalSeconds;
     console.log("TOTAL ROUNDS SECONDS", totalRoundsSeconds);
+
+    console.log("IS LAST REST", includeLastReset);
+
+    if(!includeLastReset) {
+      totalRoundsSeconds = totalRoundsSeconds - (((parseInt(timeOffMinutes) * 60) + parseInt(timeOffSeconds)));
+    }
 
     setFinalCustomSeconds(totalRoundsSeconds);
     setCustomStart(true);
@@ -558,14 +565,24 @@ const ClassDisplayScreen = () => {
         startTime: prepSecondsFinal + (round === 1 ? 0 : (round - 1) * timeSeconds),
         finishTime: prepSecondsFinal + (round === 1 ? (parseInt(timeOnMinutes) * 60) + parseInt(timeOnSeconds): (round * timeSeconds) - parseInt(timeOffSeconds))
       }
+      sectionsInfo.push(section);
 
+      if(round !== rounds) {
+        var timeOffSection = {
+          label: "TIME OFF",
+          startTime: prepSecondsFinal + (((round - 1) * parseInt(timeSeconds)) + (parseInt(timeOnMinutes) * 60) + parseInt(timeOnSeconds)),
+          finishTime: prepSecondsFinal + (round * timeSeconds)
+        }
+        sectionsInfo.push(timeOffSection);
+      }
+    }
+
+    if(includeLastReset) {
       var timeOffSection = {
         label: "TIME OFF",
-        startTime: prepSecondsFinal + (((round - 1) * parseInt(timeSeconds)) + (parseInt(timeOnMinutes) * 60) + parseInt(timeOnSeconds)),
-        finishTime: prepSecondsFinal + (round * timeSeconds)
+        startTime: prepSecondsFinal + (((rounds - 1) * parseInt(timeSeconds)) + (parseInt(timeOnMinutes) * 60) + parseInt(timeOnSeconds)),
+        finishTime: prepSecondsFinal + (rounds * timeSeconds)
       }
-
-      sectionsInfo.push(section);
       sectionsInfo.push(timeOffSection);
     }
 
@@ -783,7 +800,7 @@ const ClassDisplayScreen = () => {
                           </Row>
                         </Form.Group>
 
-                        <Form.Group controlId="totalWorkoutTime" className="d-flex align-items-center mt-3">
+                        {/* <Form.Group controlId="totalWorkoutTime" className="d-flex align-items-center mt-3">
                           <Row>
                             <Col md={6}>
                               <Form.Label>Total Workout Time</Form.Label>
@@ -797,6 +814,20 @@ const ClassDisplayScreen = () => {
                                   <Form.Control type="number" placeholder="Seconds" value={totalWorkoutSeconds} onChange={(e) => setTotalWorkoutSeconds(e.target.value)} />
                                 </Col>
                               </Row>
+                            </Col>
+                          </Row>
+                        </Form.Group> */}
+
+                        <Form.Group controlId="countDirectionCustom" className="d-flex align-items-center mt-3">
+                          <Row>
+                            <Col md={5}>
+                              <Form.Label style={{ marginLeft: '100px'}}>Count Up</Form.Label>
+                            </Col>
+                            <Col md={2}>
+                              <Form.Check style={{ marginLeft: '93px'}} type="switch" checked={countDirectionCustom} onChange={(e) => setCountDirectionCustom(e.target.checked)} />
+                            </Col>
+                            <Col md={5}>
+                              <Form.Label style={{ marginLeft: '100px'}}>Count Down</Form.Label>
                             </Col>
                           </Row>
                         </Form.Group>
