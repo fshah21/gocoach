@@ -61,6 +61,7 @@ const ClassDisplayScreen = () => {
   const [finalCustomSeconds, setFinalCustomSeconds] = useState('');
   const [customStart, setCustomStart] = useState(false);
   const [customSections, setCustomSections] = useState([]);
+  const [customModeEnd, setCustomModeEnd] = useState(false); 
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -125,6 +126,8 @@ const ClassDisplayScreen = () => {
   }, [])
 
   useEffect(() => {
+    console.log("IN USE EFFECT");
+    console.log("CUSTOM SECTIONS", customSections);
     if (sections.length > 0) {
       const currentMinute = timer.hours * 60 + timer.minutes;
       var currentSectionIndex = sections.findIndex(section =>
@@ -141,8 +144,30 @@ const ClassDisplayScreen = () => {
       } else {
         setCurrentSection(null);
       }
+    } 
+    if(customSections.length > 0) {
+      const currentSecond = (timer.hours * 3600) + (timer.minutes * 60) + (timer.seconds);
+      console.log("CURRENT SECOND", currentSection);
+      var currentSectionIndex = customSections.findIndex(section =>
+        currentSecond >= parseInt(section.startTime) &&
+        currentSecond < parseInt(section.finishTime)
+      );
+      console.log("CURRENT SECTION INDEX", currentSectionIndex);
+
+      if(currentSecond === 0) {
+        currentSectionIndex = 0;
+      }
+
+      console.log("CUSTOM SECTION", customSections[currentSectionIndex]);
+
+      if (currentSectionIndex !== -1) {
+        setCurrentSection(customSections[currentSectionIndex]);
+      } else {
+        setCurrentSection(null);
+      }
     }
-  }, [classInfo, timer, sections]);
+
+  }, [classInfo, timer, sections, customSections]);
 
   const handleStart = () => {
     setTimer({ hours: 0, minutes: 0, seconds: 0 });
@@ -151,22 +176,26 @@ const ClassDisplayScreen = () => {
 
   const handleStop = () => {
     setIsRunning(false);
-    handleShowRateModal();
+    if(isPresetMode) {
+      handleShowRateModal();
+    } else {
+      setCustomModeEnd(true);
+    }
   };
 
   const calculateRemainingTimeInSection = () => {
     if (currentSection) {
-      const currentTimeInSeconds = timer.hours * 3600 + timer.minutes * 60 + timer.seconds;
-      const sectionStartTimeInSeconds = parseInt(currentSection.startTime) * 60;
-      const sectionEndTimeInSeconds = parseInt(currentSection.finishTime) * 60;
-      
-      if (currentTimeInSeconds < sectionStartTimeInSeconds) {
-        // If current time is before the section start time
-        return sectionStartTimeInSeconds - currentTimeInSeconds;
-      } else if (currentTimeInSeconds >= sectionStartTimeInSeconds && currentTimeInSeconds < sectionEndTimeInSeconds) {
-        // If current time is within the section
-        return sectionEndTimeInSeconds - currentTimeInSeconds;
-      }
+        const currentTimeInSeconds = timer.hours * 3600 + timer.minutes * 60 + timer.seconds;
+        const sectionStartTimeInSeconds = isPresetMode ? parseInt(currentSection.startTime) * 60 : parseInt(currentSection.startTime);
+        const sectionEndTimeInSeconds = isPresetMode ? parseInt(currentSection.finishTime) * 60 : parseInt(currentSection.finishTime);
+        
+        if (currentTimeInSeconds < sectionStartTimeInSeconds) {
+          // If current time is before the section start time
+          return sectionStartTimeInSeconds - currentTimeInSeconds;
+        } else if (currentTimeInSeconds >= sectionStartTimeInSeconds && currentTimeInSeconds < sectionEndTimeInSeconds) {
+          // If current time is within the section
+          return sectionEndTimeInSeconds - currentTimeInSeconds;
+        }
     }
     return 0; // Default value if no current section or section not started yet
   };
@@ -178,8 +207,16 @@ const ClassDisplayScreen = () => {
   };  
 
   useEffect(() => {
+    console.log("IS RUNNING", isRunning);
+    console.log("IS PAUSED", isPaused);
+    console.log("IS PRESET MODE", isPresetMode);
+    var totalSecondsBasedOnMode = classDurationSeconds;
+    if(!isPresetMode) {
+      totalSecondsBasedOnMode = finalCustomSeconds;
+    }
+    console.log("TOTAL SECONDS BASED ON MODE", totalSecondsBasedOnMode);
     let interval;
-    if (isRunning && !isPaused && isPresetMode) {
+    if (isRunning && !isPaused) {
       interval = setInterval(() => {
         if (timer.seconds === 59) {
           timer.minutes = timer.minutes + 1;
@@ -187,7 +224,7 @@ const ClassDisplayScreen = () => {
         } else if (timer.minutes === 59) {
           timer.minutes = 0;
           timer.hours = timer.hours + 1;
-        } else if ((timer.hours * 3600 + timer.minutes * 60 + timer.seconds + 1) >= classDurationSeconds) {
+        } else if ((timer.hours * 3600 + timer.minutes * 60 + timer.seconds + 1) > totalSecondsBasedOnMode) {
           // If the current time exceeds the class duration, stop the timer
           console.log("TIMER IS EXCEEDED");
           handleStop();
@@ -212,46 +249,48 @@ const ClassDisplayScreen = () => {
       }, 1000);
     }
 
-    if (isRunning && !isPaused && !isPresetMode) {
-      interval = setInterval(() => {
-        if (timer.hours === 0 && timer.minutes === 0 && timer.seconds === 0) {
-          // Timer reached zero, stop the timer
-          handleStop();
-          return;
-        }
-        if (timer.seconds === 0) {
-          if (timer.minutes === 0 && timer.hours > 0) {
-            // Decrease hours and reset minutes and seconds
-            timer.hours = timer.hours - 1;
-            timer.minutes = 59;
-            timer.seconds = 59;
-          } else if (timer.minutes > 0) {
-            // Decrease minutes and reset seconds
-            timer.minutes = timer.minutes - 1;
-            timer.seconds = 59;
-          }
-        } else {
-          // Decrease seconds
-          timer.seconds = timer.seconds - 1;
-        }
+    // count down
+    // commented for now
+    // if (isRunning && !isPaused && !isPresetMode) {
+    //   interval = setInterval(() => {
+    //     if (timer.hours === 0 && timer.minutes === 0 && timer.seconds === 0) {
+    //       // Timer reached zero, stop the timer
+    //       // handleStop();
+    //       return;
+    //     }
+    //     if (timer.seconds === 0) {
+    //       if (timer.minutes === 0 && timer.hours > 0) {
+    //         // Decrease hours and reset minutes and seconds
+    //         timer.hours = timer.hours - 1;
+    //         timer.minutes = 59;
+    //         timer.seconds = 59;
+    //       } else if (timer.minutes > 0) {
+    //         // Decrease minutes and reset seconds
+    //         timer.minutes = timer.minutes - 1;
+    //         timer.seconds = 59;
+    //       }
+    //     } else {
+    //       // Decrease seconds
+    //       timer.seconds = timer.seconds - 1;
+    //     }
         
-        // Update the timer
-        const newTimer = {
-          hours: timer.hours,
-          minutes: timer.minutes,
-          seconds: timer.seconds,
-        };
+    //     // Update the timer
+    //     const newTimer = {
+    //       hours: timer.hours,
+    //       minutes: timer.minutes,
+    //       seconds: timer.seconds,
+    //     };
     
-        // Calculate progress
-        const totalSeconds = classDuration * 60 * 60;
-        const remainingSeconds = timer.hours * 3600 + timer.minutes * 60 + timer.seconds;
-        const currentProgress = remainingSeconds / totalSeconds;
-        setProgress(currentProgress);
+    //     // Calculate progress
+    //     const totalSeconds = classDuration * 60 * 60;
+    //     const remainingSeconds = timer.hours * 3600 + timer.minutes * 60 + timer.seconds;
+    //     const currentProgress = remainingSeconds / totalSeconds;
+    //     setProgress(currentProgress);
     
-        // Update the state
-        setTimer(newTimer);
-      }, 1000);
-    }    
+    //     // Update the state
+    //     setTimer(newTimer);
+    //   }, 1000);
+    // }    
     return () => clearInterval(interval);
   }, [isRunning, timer, classDuration, classDurationSeconds]);
   
@@ -283,6 +322,11 @@ const ClassDisplayScreen = () => {
       rating: rating
     });
 
+    navigate('/userhome', { state: { userId: userId } });
+  };
+
+  const handleCustomModeEnding = async () => {
+    setCustomModeEnd(false);
     navigate('/userhome', { state: { userId: userId } });
   };
 
@@ -827,6 +871,23 @@ const ClassDisplayScreen = () => {
           {/* You can add buttons or actions related to rating here */}
           <Button variant="secondary" onClick={handleCloseRatingModal}>
             Submit
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={customModeEnd} onHide={handleCustomModeEnding}>
+        <Modal.Header closeButton>
+          <Modal.Title>Yay!</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>
+            Your workout has ended. Thank you!
+          </p>
+        </Modal.Body>
+        <Modal.Footer>
+          {/* You can add buttons or actions related to rating here */}
+          <Button variant="secondary" onClick={handleCustomModeEnding}>
+            Close
           </Button>
         </Modal.Footer>
       </Modal>
