@@ -234,9 +234,10 @@ const ClassDisplayScreen = () => {
     if(!isPresetMode) {
       totalSecondsBasedOnMode = finalCustomSeconds;
     }
+    console.log("FINAL CUSTOM SECONDS", finalCustomSeconds);
     console.log("TOTAL SECONDS BASED ON MODE", totalSecondsBasedOnMode);
     let interval;
-    if (isRunning && !isPaused) {
+    if (isRunning && !isPaused && !countDirectionCustom) {
       interval = setInterval(() => {
         if (timer.seconds === 59) {
           timer.minutes = timer.minutes + 1;
@@ -271,46 +272,46 @@ const ClassDisplayScreen = () => {
 
     // count down
     // commented for now
-    // if (isRunning && !isPaused && !isPresetMode) {
-    //   interval = setInterval(() => {
-    //     if (timer.hours === 0 && timer.minutes === 0 && timer.seconds === 0) {
-    //       // Timer reached zero, stop the timer
-    //       // handleStop();
-    //       return;
-    //     }
-    //     if (timer.seconds === 0) {
-    //       if (timer.minutes === 0 && timer.hours > 0) {
-    //         // Decrease hours and reset minutes and seconds
-    //         timer.hours = timer.hours - 1;
-    //         timer.minutes = 59;
-    //         timer.seconds = 59;
-    //       } else if (timer.minutes > 0) {
-    //         // Decrease minutes and reset seconds
-    //         timer.minutes = timer.minutes - 1;
-    //         timer.seconds = 59;
-    //       }
-    //     } else {
-    //       // Decrease seconds
-    //       timer.seconds = timer.seconds - 1;
-    //     }
+    if (isRunning && !isPaused && !isPresetMode && countDirectionCustom) {
+      interval = setInterval(() => {
+        if (timer.hours === 0 && timer.minutes === 0 && timer.seconds === 0) {
+          // Timer reached zero, stop the timer
+          // handleStop();
+          return;
+        }
+        if (timer.seconds === 0) {
+          if (timer.minutes === 0 && timer.hours > 0) {
+            // Decrease hours and reset minutes and seconds
+            timer.hours = timer.hours - 1;
+            timer.minutes = 59;
+            timer.seconds = 59;
+          } else if (timer.minutes > 0) {
+            // Decrease minutes and reset seconds
+            timer.minutes = timer.minutes - 1;
+            timer.seconds = 59;
+          }
+        } else {
+          // Decrease seconds
+          timer.seconds = timer.seconds - 1;
+        }
         
-    //     // Update the timer
-    //     const newTimer = {
-    //       hours: timer.hours,
-    //       minutes: timer.minutes,
-    //       seconds: timer.seconds,
-    //     };
+        // Update the timer
+        const newTimer = {
+          hours: timer.hours,
+          minutes: timer.minutes,
+          seconds: timer.seconds,
+        };
     
-    //     // Calculate progress
-    //     const totalSeconds = classDuration * 60 * 60;
-    //     const remainingSeconds = timer.hours * 3600 + timer.minutes * 60 + timer.seconds;
-    //     const currentProgress = remainingSeconds / totalSeconds;
-    //     setProgress(currentProgress);
+        // Calculate progress
+        const totalSeconds = classDuration * 60 * 60;
+        const remainingSeconds = timer.hours * 3600 + timer.minutes * 60 + timer.seconds;
+        const currentProgress = remainingSeconds / totalSeconds;
+        setProgress(currentProgress);
     
-    //     // Update the state
-    //     setTimer(newTimer);
-    //   }, 1000);
-    // }    
+        // Update the state
+        setTimer(newTimer);
+      }, 1000);
+    }    
     return () => clearInterval(interval);
   }, [isRunning, timer, classDuration, classDurationSeconds]);
   
@@ -520,31 +521,37 @@ const ClassDisplayScreen = () => {
   };
 
   const calculateTotalWorkoutTime = () => {
-    console.log("NUMBER OF ROUNDS", rounds);
-    console.log("TIME ON MINUTES", timeOnMinutes);
-    console.log("TIME ON SECONDS", timeOnSeconds);
-    console.log("TIME OFF MINUTES", timeOffMinutes);
-    console.log("TIME OFF SECONDS", timeOffSeconds);
-    console.log("PREP TIME MINUTES", prepMinutes);
-    console.log("PREP TIME SECONDS", prepSeconds);
-
-    const timeSeconds = (((parseInt(timeOnMinutes) * 60) + parseInt(timeOnSeconds)) + ((parseInt(timeOffMinutes) * 60) + parseInt(timeOffSeconds)));
-    console.log("TIME ON / OFF SECONDS", timeSeconds);
-  
+    const timeSeconds = (((parseInt(timeOnMinutes) * 60) + parseInt(timeOnSeconds)) + ((parseInt(timeOffMinutes) * 60) + parseInt(timeOffSeconds)));  
+    console.log("TIME SECONDS", timeSeconds);
     const prepSecondsFinal = (parseInt(prepMinutes) * 60) + parseInt(prepSeconds);
     console.log("PREP SECONDS", prepSecondsFinal);
-
-    const totalSeconds = timeSeconds + prepSecondsFinal;
-    console.log("TOTAL SECONDS", totalSeconds);
-
-    var totalRoundsSeconds = rounds * totalSeconds;
-    console.log("TOTAL ROUNDS SECONDS", totalRoundsSeconds);
+    // const totalSeconds = timeSeconds + prepSecondsFinal;
+    // console.log("TOTAL SECONDS", totalSeconds);
+    var totalRoundsSeconds = (rounds * timeSeconds) + prepSecondsFinal;
+    console.log("TOTAL ROUND SECONDS BEFORE LAST REST", totalRoundsSeconds);
 
     console.log("IS LAST REST", includeLastReset);
+    console.log("COUNT DIRECTION CUSTOM", countDirectionCustom);
 
     if(!includeLastReset) {
       totalRoundsSeconds = totalRoundsSeconds - (((parseInt(timeOffMinutes) * 60) + parseInt(timeOffSeconds)));
     }
+
+    console.log("TOTAL ROUNDS SECONDS AFTER LAST REST", totalRoundsSeconds);
+
+    if(countDirectionCustom) {
+      const hours = Math.floor(totalRoundsSeconds / 3600); // Whole hours
+      const minutes = Math.floor((totalRoundsSeconds % 3600) / 60); // Remaining minutes
+      const seconds = totalRoundsSeconds % 60; // Remaining seconds
+
+      setTimer({
+        hours: hours,
+        minutes: minutes,
+        seconds: seconds
+      });
+    }
+
+    console.log("TOTAL ROUNDS SECONDS", totalRoundsSeconds);
 
     setFinalCustomSeconds(totalRoundsSeconds);
     setCustomStart(true);
@@ -559,7 +566,9 @@ const ClassDisplayScreen = () => {
 
     sectionsInfo.push(prepSection);
 
-    for (let round = 1; round <= rounds; round++) {
+    console.log("TOTAL ROUNDS", rounds);
+
+    for (let round = 1; round <= parseInt(rounds); round++) {
       var section = {
         label: "TIME ON",
         startTime: prepSecondsFinal + (round === 1 ? 0 : (round - 1) * timeSeconds),
@@ -567,7 +576,7 @@ const ClassDisplayScreen = () => {
       }
       sectionsInfo.push(section);
 
-      if(round !== rounds) {
+      if(round !== parseInt(rounds)) {
         var timeOffSection = {
           label: "TIME OFF",
           startTime: prepSecondsFinal + (((round - 1) * parseInt(timeSeconds)) + (parseInt(timeOnMinutes) * 60) + parseInt(timeOnSeconds)),
@@ -731,7 +740,7 @@ const ClassDisplayScreen = () => {
           ) : (
             <>
               <Container className="mt-5">
-                {!customStart && (
+                {!customStart && !timerExpanded && (
                   <Row className="justify-content-center">
                     <Col md={6}>
                       <Form>
@@ -819,17 +828,11 @@ const ClassDisplayScreen = () => {
                         </Form.Group> */}
 
                         <Form.Group controlId="countDirectionCustom" className="d-flex align-items-center mt-3">
-                          <Row>
-                            <Col md={5}>
-                              <Form.Label style={{ marginLeft: '100px'}}>Count Up</Form.Label>
-                            </Col>
-                            <Col md={2}>
-                              <Form.Check style={{ marginLeft: '93px'}} type="switch" checked={countDirectionCustom} onChange={(e) => setCountDirectionCustom(e.target.checked)} />
-                            </Col>
-                            <Col md={5}>
-                              <Form.Label style={{ marginLeft: '100px'}}>Count Down</Form.Label>
-                            </Col>
-                          </Row>
+                          <div className="d-flex align-items-center">
+                            <p  style={{ marginLeft: "80px"}} className='mt-3'><span>Count Up  </span></p>
+                            <Form.Check style={{ marginLeft: "178px"}} type="switch" checked={countDirectionCustom} onChange={(e) => setCountDirectionCustom(e.target.checked)} />
+                            <p className='mt-3' style={{ marginLeft: "80px"}}><span>   Count Down</span></p>
+                          </div>
                         </Form.Group>
 
                         <Form.Group controlId="includeLastReset" className="d-flex align-items-center mt-3">
@@ -848,7 +851,7 @@ const ClassDisplayScreen = () => {
                     </Col>
                   </Row>
                 )}
-                {customStart && (
+                {customStart && !timerExpanded && (
                   <Row className="align-items-center">
                   <Col md={1}>
                     <Button variant="success" onClick={isRunning ? handlePause : handleResume}>
@@ -856,7 +859,7 @@ const ClassDisplayScreen = () => {
                     </Button>
                   </Col>
                   <Col md={8}>
-                    <CustomModeProgressBar className="mt-5" sections={customSections} classDuration={finalCustomSeconds} classDurationSeconds={finalCustomSeconds} timerSeconds={timerSeconds}/>
+                    <CustomModeProgressBar className="mt-5" sections={customSections} classDuration={finalCustomSeconds} classDurationSeconds={finalCustomSeconds} timerSeconds={timerSeconds} countDirectionCustom={countDirectionCustom}/>
                   </Col>
                   <Col md={3}>
                     <div className="border p-3">
