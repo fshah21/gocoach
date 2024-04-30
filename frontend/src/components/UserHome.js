@@ -18,18 +18,13 @@ const UserHome = () => {
   const [ratingArray, setRatingArray] = useState([]);
 
   const handleStartClass = () => {
-    console.log("START BUTTON IS CLICKED");
-    console.log("CLASS INFO IN START BUTTON", classInfo);
     navigate('/class-display', { state: { classId: classInfo } });
   }
 
   useEffect(() => {
     const fetchClassAndSections = async () => {
       try {
-        console.log("FETCH CLASS AND SECTIONS IN USER HOME");
-        // Fetch class for today
         const classResponse = await axios.get('http://localhost:5000/gocoachbackend/us-central1/backend/classes/'+ userId + '/getClassForToday');
-        console.log("CLASS RESPONSE", classResponse.data);
         setClassInfo(classResponse.data);
 
         // Fetch sections for the class
@@ -45,7 +40,6 @@ const UserHome = () => {
         setPastClassIds(classIds.slice(0, 2));
 
         const pastSectionsPromises = classIds.map(async classId => {
-          console.log("CLASS ID IN PAST SECTIONS", classId);
           const sectionsResponse = await axios.get(`http://localhost:5000/gocoachbackend/us-central1/backend/users/${userId}/classes/getAllSectionsInClass/${classId}`);
           return sectionsResponse.data;
         });
@@ -54,17 +48,14 @@ const UserHome = () => {
         setPastSections(resolvedPastSections);
 
         const ratingsInfo = classIds.map(async classId => {
-          console.log("GETTING RATING");
           const classInfoResponse = await axios.post(`http://localhost:5000/gocoachbackend/us-central1/backend/classes/${classId}/getClassRating`, {
             user_id: userId
           }
           );
-          console.log("CLASS INFO RESPONSE", classInfoResponse.data);
           return classInfoResponse.data.rating;
         })
 
         const ratingsSet = await Promise.all(ratingsInfo);
-        console.log("RATING SET", ratingsSet);
         setRatingArray(ratingsSet);
 
       } catch (error) {

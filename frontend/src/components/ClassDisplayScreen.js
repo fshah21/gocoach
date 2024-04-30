@@ -97,7 +97,6 @@ const ClassDisplayScreen = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log("FETCH CLASS AND SECTIONS IN CLASS DISPLAY SCREEN");
       if (classInfo) {
         const { id, name, duration } = classInfo[0];
   
@@ -117,6 +116,8 @@ const ClassDisplayScreen = () => {
               finishTime: section.finishTime,
               displayText: section.displayText,
               coachNotes: section.coachNotes,
+              intervalEnabled: section.intervalEnabled,
+              intervalTime: section.intervalTime
           }))
           .sort((a, b) => a.startTime.localeCompare(b.startTime));
 
@@ -130,7 +131,9 @@ const ClassDisplayScreen = () => {
           coachNotes: section.coachNotes,
           completed: false,
           startTime: section.startTime,
-          finishTime: section.finishTime
+          finishTime: section.finishTime,
+          intervalEnabled: section.intervalEnabled,
+          intervalTime: section.intervalTime
         }))
 
         setSections(sectionData);
@@ -140,9 +143,8 @@ const ClassDisplayScreen = () => {
   }, [])
 
   useEffect(() => {
-    console.log("IN USE EFFECT");
-    console.log("CUSTOM SECTIONS", customSections);
-    if (sections.length > 0) {
+    console.log("IS PRESET MODE TOGGLE", isPresetMode);
+    if (isPresetMode && sections.length > 0) {
       const currentMinute = timer.hours * 60 + timer.minutes;
       var currentSectionIndex = sections.findIndex(section =>
         currentMinute >= parseInt(section.startTime) &&
@@ -159,20 +161,17 @@ const ClassDisplayScreen = () => {
         setCurrentSection(null);
       }
     } 
-    if(customSections.length > 0) {
+    if(!isPresetMode && customSections.length > 0) {
+      console.log("THIS IS IN CUSTOM SECTIONS", customSections);
       const currentSecond = (timer.hours * 3600) + (timer.minutes * 60) + (timer.seconds);
-      console.log("CURRENT SECOND", currentSection);
       var currentSectionIndex = customSections.findIndex(section =>
         currentSecond >= parseInt(section.startTime) &&
         currentSecond < parseInt(section.finishTime)
       );
-      console.log("CURRENT SECTION INDEX", currentSectionIndex);
 
       if(currentSecond === 0) {
         currentSectionIndex = 0;
       }
-
-      console.log("CUSTOM SECTION", customSections[currentSectionIndex]);
 
       if (currentSectionIndex !== -1) {
         setCurrentSection(customSections[currentSectionIndex]);
@@ -181,7 +180,7 @@ const ClassDisplayScreen = () => {
       }
     }
 
-  }, [classInfo, timer, sections, customSections]);
+  }, [classInfo, timer, sections, customSections, isPresetMode, customStart]);
 
   const handleStart = () => {
     setTimer({ hours: 0, minutes: 0, seconds: 0 });
@@ -202,13 +201,17 @@ const ClassDisplayScreen = () => {
         const currentTimeInSeconds = timer.hours * 3600 + timer.minutes * 60 + timer.seconds;
         const sectionStartTimeInSeconds = isPresetMode ? parseInt(currentSection.startTime) * 60 : parseInt(currentSection.startTime);
         const sectionEndTimeInSeconds = isPresetMode ? parseInt(currentSection.finishTime) * 60 : parseInt(currentSection.finishTime);
-        
-        if (currentTimeInSeconds < sectionStartTimeInSeconds) {
-          // If current time is before the section start time
-          return sectionStartTimeInSeconds - currentTimeInSeconds;
-        } else if (currentTimeInSeconds >= sectionStartTimeInSeconds && currentTimeInSeconds < sectionEndTimeInSeconds) {
-          // If current time is within the section
-          return sectionEndTimeInSeconds - currentTimeInSeconds;
+        if(isPresetMode) {
+          if (currentTimeInSeconds < sectionStartTimeInSeconds) {
+            // If current time is before the section start time
+            return sectionStartTimeInSeconds - currentTimeInSeconds;
+          } else if (currentTimeInSeconds >= sectionStartTimeInSeconds && currentTimeInSeconds < sectionEndTimeInSeconds) {
+            // If current time is within the section
+            return sectionEndTimeInSeconds - currentTimeInSeconds;
+          }
+        }
+        else {
+          return (sectionEndTimeInSeconds - sectionStartTimeInSeconds);
         }
     }
     return 0; // Default value if no current section or section not started yet
@@ -220,22 +223,21 @@ const ClassDisplayScreen = () => {
       const currentTimeInSeconds = timer.hours * 3600 + timer.minutes * 60 + timer.seconds;
       return classDurationSeconds - currentTimeInSeconds;
     } else {
-      const currentTimeInSeconds = timer.hours * 3600 + timer.minutes * 60 + timer.seconds;
-      console.log("CURRENT TIME IN SECONDS");
-      return finalCustomSeconds - currentTimeInSeconds;
+      if(countDirectionCustom) {
+        const currentTimeInSeconds = timer.hours * 3600 + timer.minutes * 60 + timer.seconds;
+        return finalCustomSeconds - (finalCustomSeconds - currentTimeInSeconds);
+      } else {
+        const currentTimeInSeconds = timer.hours * 3600 + timer.minutes * 60 + timer.seconds;
+        return finalCustomSeconds - currentTimeInSeconds;
+      }
     }
   };  
 
   useEffect(() => {
-    console.log("IS RUNNING", isRunning);
-    console.log("IS PAUSED", isPaused);
-    console.log("IS PRESET MODE", isPresetMode);
     var totalSecondsBasedOnMode = classDurationSeconds;
     if(!isPresetMode) {
       totalSecondsBasedOnMode = finalCustomSeconds;
     }
-    console.log("FINAL CUSTOM SECONDS", finalCustomSeconds);
-    console.log("TOTAL SECONDS BASED ON MODE", totalSecondsBasedOnMode);
     let interval;
     if (isRunning && !isPaused && !countDirectionCustom) {
       interval = setInterval(() => {
@@ -246,8 +248,6 @@ const ClassDisplayScreen = () => {
           timer.minutes = 0;
           timer.hours = timer.hours + 1;
         } else if ((timer.hours * 3600 + timer.minutes * 60 + timer.seconds + 1) > totalSecondsBasedOnMode) {
-          // If the current time exceeds the class duration, stop the timer
-          console.log("TIMER IS EXCEEDED");
           handleStop();
           return;
         } else {
@@ -333,10 +333,6 @@ const ClassDisplayScreen = () => {
   // Function to handle closing rating modal
   const handleCloseRatingModal = async () => {
     setShowRatingModal(false);
-    console.log("IN HANDLE START CLICK");
-    console.log("USER ID", userId);
-    console.log("CLASS ID", classId);
-    console.log("STAR INDEX", rating + 1);
 
     await axios.post(`http://localhost:5000/gocoachbackend/us-central1/backend/classes/saveRating/${classId}`, {
       user_id: userId,
@@ -362,12 +358,7 @@ const ClassDisplayScreen = () => {
   };
 
   const handleStarClick = (starIndex) => {
-    console.log("HANDLE STAR CLICK");
     setRating(starIndex + 1); // Set the rating value (stars are 1-indexed)
-    console.log("IN HANDLE START CLICK");
-    console.log("USER ID", userId);
-    console.log("CLASS ID", classId);
-    console.log("STAR INDEX + 1", starIndex);
   };
 
   const handlePause = () => {
@@ -407,31 +398,14 @@ const ClassDisplayScreen = () => {
     }
 
     if (nextSectionIndex < sections.length) {
-      // Calculate the time remaining until the next section's start time
       const nextSectionStartTime = parseInt(sections[nextSectionIndex].startTime) * 60;
-      console.log("NEXT SECTION START TIME", nextSectionStartTime);
       const currentTimeInSeconds = timer.hours * 3600 + timer.minutes * 60 + timer.seconds;
-      console.log("CURRENT TIME IN SECONDS", currentTimeInSeconds);
-      // const timeUntilNextSection = nextSectionStartTime - currentTimeInSeconds;
-      // console.log("TIME UNTIL NEXT SECTION", timeUntilNextSection);
-  
-      // Pause the timer until the next section's start time
       setIsRunning(false);
       setIsPaused(true);
-  
-      // Update the time remaining in the current section
       const remainingTimeInCurrentSection = calculateRemainingTimeInSection();
-      console.log("REMAINING TIME IN CURRENT SECTION", remainingTimeInCurrentSection);
-      // Calculate the remaining time for the overall class
       const totalRemainingTime = calculateTotalRemainingTime();
-      console.log("TOTAL REMAINING TIME", totalRemainingTime);
-  
-      // Update the progress bar
       const currentProgress = nextSectionStartTime;
-      console.log("CURRENT PROGRESS", currentProgress);
       setProgress(currentProgress);
-  
-      // Update the state with the new current section and remaining times
       setCurrentSection(sections[nextSectionIndex]);
       setTimer({
         hours: Math.floor(nextSectionStartTime / 3600),
@@ -496,8 +470,6 @@ const ClassDisplayScreen = () => {
   };
 
   const handleExpand = (section) => {
-    console.log("HANDLE EXPAND");
-
     switch (section) {
       case 'displayText':
         setDisplayTextExpanded(!displayTextExpanded);
@@ -522,22 +494,12 @@ const ClassDisplayScreen = () => {
 
   const calculateTotalWorkoutTime = () => {
     const timeSeconds = (((parseInt(timeOnMinutes) * 60) + parseInt(timeOnSeconds)) + ((parseInt(timeOffMinutes) * 60) + parseInt(timeOffSeconds)));  
-    console.log("TIME SECONDS", timeSeconds);
     const prepSecondsFinal = (parseInt(prepMinutes) * 60) + parseInt(prepSeconds);
-    console.log("PREP SECONDS", prepSecondsFinal);
-    // const totalSeconds = timeSeconds + prepSecondsFinal;
-    // console.log("TOTAL SECONDS", totalSeconds);
     var totalRoundsSeconds = (rounds * timeSeconds) + prepSecondsFinal;
-    console.log("TOTAL ROUND SECONDS BEFORE LAST REST", totalRoundsSeconds);
-
-    console.log("IS LAST REST", includeLastReset);
-    console.log("COUNT DIRECTION CUSTOM", countDirectionCustom);
 
     if(!includeLastReset) {
       totalRoundsSeconds = totalRoundsSeconds - (((parseInt(timeOffMinutes) * 60) + parseInt(timeOffSeconds)));
     }
-
-    console.log("TOTAL ROUNDS SECONDS AFTER LAST REST", totalRoundsSeconds);
 
     if(countDirectionCustom) {
       const hours = Math.floor(totalRoundsSeconds / 3600); // Whole hours
@@ -551,8 +513,6 @@ const ClassDisplayScreen = () => {
       });
     }
 
-    console.log("TOTAL ROUNDS SECONDS", totalRoundsSeconds);
-
     setFinalCustomSeconds(totalRoundsSeconds);
     setCustomStart(true);
 
@@ -565,8 +525,6 @@ const ClassDisplayScreen = () => {
     }
 
     sectionsInfo.push(prepSection);
-
-    console.log("TOTAL ROUNDS", rounds);
 
     for (let round = 1; round <= parseInt(rounds); round++) {
       var section = {
@@ -595,15 +553,12 @@ const ClassDisplayScreen = () => {
       sectionsInfo.push(timeOffSection);
     }
 
-    console.log("SECTIONS INFO", sectionsInfo);
     setCustomSections(sectionsInfo);
+    setIsPresetMode(false);
   }
 
   return (
     <Container>
-      {!displayTextExpanded && !coachNotesExpanded && !timerExpanded && (
-        <p>Class Display Screen Is Here</p>
-      )}
       {classId && (
         <div style={{ textAlign: 'center' }}>
           {!displayTextExpanded && !coachNotesExpanded && (
@@ -903,7 +858,6 @@ const ClassDisplayScreen = () => {
         </Modal.Footer>
       </Modal>
 
-      {/* Modal for rating */}
       <Modal show={showRatingModal} onHide={handleCloseRatingModal}>
         <Modal.Header closeButton>
           <Modal.Title>Rate this Class</Modal.Title>

@@ -66,3 +66,12 @@ code {
   background-color: #ff3300; /* Red color for high progress */
   color: #fff;
 }
+
+.interval {
+  height: 100%; /* Ensure the div fills the parent's height */
+  box-sizing: border-box;
+}
+
+.interval:not(:last-child) {
+  border-right: 2px solid #000; /* Only add a border to the right of intervals except the last one */
+}
