@@ -117,7 +117,8 @@ const ClassDisplayScreen = () => {
               displayText: section.displayText,
               coachNotes: section.coachNotes,
               intervalEnabled: section.intervalEnabled,
-              intervalTime: section.intervalTime
+              intervalTime: section.intervalTime,
+              countDirectionUp: section.countDirectionUp, 
           }))
           .sort((a, b) => a.startTime.localeCompare(b.startTime));
 
@@ -133,7 +134,8 @@ const ClassDisplayScreen = () => {
           startTime: section.startTime,
           finishTime: section.finishTime,
           intervalEnabled: section.intervalEnabled,
-          intervalTime: section.intervalTime
+          intervalTime: section.intervalTime,
+          countDirectionUp: section.countDirectionUp, 
         }))
 
         setSections(sectionData);
@@ -240,6 +242,7 @@ const ClassDisplayScreen = () => {
     }
     let interval;
     if (isRunning && !isPaused && !countDirectionCustom) {
+      console.log("COUNT DIRECTION UP IN THE MODE TRUE");
       interval = setInterval(() => {
         if (timer.seconds === 59) {
           timer.minutes = timer.minutes + 1;
@@ -313,7 +316,7 @@ const ClassDisplayScreen = () => {
       }, 1000);
     }    
     return () => clearInterval(interval);
-  }, [isRunning, timer, classDuration, classDurationSeconds]);
+  }, [isRunning, timer, classDuration, classDurationSeconds, currentSection]);
   
   const handleShowRateModal = () => {
     setShowRateModal(true);
@@ -673,13 +676,13 @@ const ClassDisplayScreen = () => {
                     <div className="border p-3">
                       <Row>
                         <Col>
-                          <p className='mb-0 headings'>Time Remaining in Section</p>
+                          <p className='mb-0 headings'>TIME REMAINING - SECTION</p>
                           <p className='headings'>{`${Math.floor(calculateRemainingTimeInSection() / 3600).toString().padStart(2, '0')}:${Math.floor((calculateRemainingTimeInSection() % 3600) / 60).toString().padStart(2, '0')}:${(calculateRemainingTimeInSection() % 60).toString().padStart(2, '0')}`}</p>
                         </Col>
                       </Row>
                       <Row>
                         <Col>
-                          <p className='mb-0 headings'>Remaining Time</p>
+                          <p className='mb-0 headings'>TIME REMAINING - CLASS</p>
                           <p className='mb-0 headings'>{`${Math.floor(calculateTotalRemainingTime() / 3600)}:${Math.floor((calculateTotalRemainingTime() % 3600) / 60).toString().padStart(2, '0')}:${(calculateTotalRemainingTime() % 60).toString().padStart(2, '0')}`}</p>
                         </Col>
                       </Row>
@@ -818,13 +821,13 @@ const ClassDisplayScreen = () => {
                     <div className="border p-3">
                       <Row>
                         <Col>
-                          <p className='mb-0 headings'>Time Remaining in Section</p>
+                          <p className='mb-0 headings'>TIME REMAINING - SECTION</p>
                           <p className='headings'>{`${Math.floor(calculateRemainingTimeInSection() / 3600).toString().padStart(2, '0')}:${Math.floor((calculateRemainingTimeInSection() % 3600) / 60).toString().padStart(2, '0')}:${(calculateRemainingTimeInSection() % 60).toString().padStart(2, '0')}`}</p>
                         </Col>
                       </Row>
                       <Row>
                         <Col>
-                          <p className='mb-0 headings'>Remaining Time</p>
+                          <p className='mb-0 headings'>TIME REMAINING - CLASS</p>
                           <p className='mb-0 headings'>{`${Math.floor(calculateTotalRemainingTime() / 3600)}:${Math.floor((calculateTotalRemainingTime() % 3600) / 60).toString().padStart(2, '0')}:${(calculateTotalRemainingTime() % 60).toString().padStart(2, '0')}`}</p>
                         </Col>
                       </Row>
