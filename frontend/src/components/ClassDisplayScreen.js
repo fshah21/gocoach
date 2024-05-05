@@ -8,7 +8,7 @@ import CustomProgressBar from './CustomProgressBar';
 import CustomModeProgressBar from './CustomModeProgressBar';
 import { BsStarFill, BsStar } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
-import { faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
+import { faPlay, faPause, faFastForward } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExpandArrowsAlt } from '@fortawesome/free-solid-svg-icons';
 import CustomMode from './CustomMode';
@@ -558,12 +558,12 @@ const ClassDisplayScreen = () => {
   }
 
   return (
-    <Container>
+    <Container fluid className="main-container">
       {classId && (
         <div style={{ textAlign: 'center' }}>
           {!displayTextExpanded && !coachNotesExpanded && (
             <div>
-              <p style={{ fontSize: '8rem', ...timerExpandedStyle }}>{`${timer.hours
+              <p style={{ fontSize: '8rem', ...timerExpandedStyle }} className='timer-style'>{`${timer.hours
                 .toString()
                 .padStart(2, '0')}:${timer.minutes.toString().padStart(2, '0')}:${timer.seconds
                 .toString()
@@ -578,20 +578,20 @@ const ClassDisplayScreen = () => {
 
           )}
           {!displayTextExpanded && !coachNotesExpanded && !timerExpanded && (
-            <hr style={{ width: '100%', margin: '20px auto', border: '2px solid black'}} />
+            <hr style={{ width: '70%', margin: '20px auto', border: '2px solid white'}} />
           )}
           
           {!displayTextExpanded && !coachNotesExpanded && !timerExpanded && (
             <div className="d-flex justify-content-center">
             <Form className="d-flex align-items-center">
-              <p className="mb-0 mr-2"><span>Preset  </span></p>
+              <p className="mb-0 mr-2 tag-style"><span>Preset  </span></p>
               <Form.Check
                 type="switch"
                 id="mode-switch"
                 checked={!isPresetMode}
                 onChange={() => toggleMode(!isPresetMode)}
               />
-              <p className="mb-0 ml-2"><span>   Custom</span></p>
+              <p className="mb-0 ml-2 tag-style"><span>   Custom</span></p>
             </Form>
             </div>
           )}
@@ -600,18 +600,13 @@ const ClassDisplayScreen = () => {
 
           {isPresetMode ? (
             <>
-            {!displayTextExpanded && !coachNotesExpanded && !timerExpanded && (
-              <Button variant="success" onClick={handleSkipSection} className='mt-3'>
-                Skip This Section
-              </Button>
-            )}
           
           {showProgressBar && currentSection && ( // Conditional rendering of ProgressBar and Current Section
             <div className='mt-5'>
               {!displayTextExpanded && !coachNotesExpanded && !timerExpanded && (
                 <Row>
                   <Col md={6} className='text-left'>
-                    <h3>{currentSection.label}</h3>
+                    <h3 className='headings'>{currentSection.label}</h3>
                   </Col>
                   <Col md={6}>
                   </Col>
@@ -621,40 +616,40 @@ const ClassDisplayScreen = () => {
                   <Row className='mb-5'>
                   {!coachNotesExpanded && !timerExpanded && (
                       <Col md={6}>
-                        <p className='text-left' style={{...expandedStyle}}>DISPLAY TEXT</p>
+                        <p className='text-left headings' style={{...expandedStyle}}>DISPLAY TEXT</p>
                         <div style={{ position: 'relative'}}>
                           <textarea
                             readOnly
                             rows={5}
                             style={{ border: 'none', resize: 'none', marginBottom: '10px', width: '100%', ...(displayTextExpanded && { height: 'calc(100vh - 20px)' }), ...expandedStyle }}
-                            className='text-left'
+                            className='text-left textareabg'
                           >
                             {currentSection.displayText}
                           </textarea>
                           <FontAwesomeIcon
                             icon={faExpandArrowsAlt}
                             onClick={() => handleExpand('displayText')}
-                            style={{ position: 'absolute', top: '5px', right: '5px', cursor: 'pointer', zIndex: 1 }}
+                            style={{ position: 'absolute', top: '5px', right: '5px', cursor: 'pointer', zIndex: 1, color: '#b3b3b3' }}
                           />
                         </div>
                         </Col>
                     )}
                     {!displayTextExpanded && !timerExpanded && (
                       <Col md={6}>
-                        <p className='text-left' style={{...expandedStyle}}>COACHES NOTES</p>
+                        <p className='text-left headings' style={{...expandedStyle}}>COACHES NOTES</p>
                         <div style={{ position: 'relative' }}>
                           <textarea
                             readOnly
                             rows={5}
                             style={{ border: 'none', resize: 'none', marginBottom: '10px', width: '100%', ...(coachNotesExpanded && { height: 'calc(100vh - 20px)' }), ...expandedStyle }}
-                            className='text-left'
+                            className='text-left textareabg'
                           >
                             {currentSection.coachNotes}
                           </textarea>
                           <FontAwesomeIcon
                             icon={faExpandArrowsAlt}
                             onClick={() => handleExpand('coachNotes')}
-                            style={{ position: 'absolute', top: '5px', right: '5px', cursor: 'pointer', zIndex: 1 }}
+                            style={{ position: 'absolute', top: '5px', right: '5px', cursor: 'pointer', zIndex: 1, color: '#b3b3b3'}}
                           />
                         </div>
                       </Col>
@@ -664,8 +659,11 @@ const ClassDisplayScreen = () => {
               {!displayTextExpanded && !coachNotesExpanded && !timerExpanded && (
                 <Row className="align-items-center">
                   <Col md={1}>
-                    <Button variant="success" onClick={isRunning ? handlePause : handleResume}>
+                    <Button onClick={isRunning ? handlePause : handleResume} className='buttons' style={{ marginRight: '10px' }}>
                       {isRunning ? <FontAwesomeIcon icon={faPause} /> : <FontAwesomeIcon icon={faPlay} />}
+                    </Button>
+                    <Button onClick={handleSkipSection} className='buttons'>
+                      <FontAwesomeIcon icon={faFastForward} />
                     </Button>
                   </Col>
                   <Col md={8}>
@@ -675,14 +673,14 @@ const ClassDisplayScreen = () => {
                     <div className="border p-3">
                       <Row>
                         <Col>
-                          <p className='mb-0'>Time Remaining in Section</p>
-                          <p>{`${Math.floor(calculateRemainingTimeInSection() / 3600).toString().padStart(2, '0')}:${Math.floor((calculateRemainingTimeInSection() % 3600) / 60).toString().padStart(2, '0')}:${(calculateRemainingTimeInSection() % 60).toString().padStart(2, '0')}`}</p>
+                          <p className='mb-0 headings'>Time Remaining in Section</p>
+                          <p className='headings'>{`${Math.floor(calculateRemainingTimeInSection() / 3600).toString().padStart(2, '0')}:${Math.floor((calculateRemainingTimeInSection() % 3600) / 60).toString().padStart(2, '0')}:${(calculateRemainingTimeInSection() % 60).toString().padStart(2, '0')}`}</p>
                         </Col>
                       </Row>
                       <Row>
                         <Col>
-                          <p className='mb-0'>Remaining Time</p>
-                          <p className='mb-0'>{`${Math.floor(calculateTotalRemainingTime() / 3600)}:${Math.floor((calculateTotalRemainingTime() % 3600) / 60).toString().padStart(2, '0')}:${(calculateTotalRemainingTime() % 60).toString().padStart(2, '0')}`}</p>
+                          <p className='mb-0 headings'>Remaining Time</p>
+                          <p className='mb-0 headings'>{`${Math.floor(calculateTotalRemainingTime() / 3600)}:${Math.floor((calculateTotalRemainingTime() % 3600) / 60).toString().padStart(2, '0')}:${(calculateTotalRemainingTime() % 60).toString().padStart(2, '0')}`}</p>
                         </Col>
                       </Row>
                     </div>
@@ -694,7 +692,7 @@ const ClassDisplayScreen = () => {
             </>
           ) : (
             <>
-              <Container className="mt-5">
+              <Container fluid className="mt-5">
                 {!customStart && !timerExpanded && (
                   <Row className="justify-content-center">
                     <Col md={6}>
@@ -702,7 +700,7 @@ const ClassDisplayScreen = () => {
                         <Form.Group controlId="rounds" className="d-flex align-items-center mt-3">
                           <Row>
                             <Col md={9}>
-                              <Form.Label>Number of Rounds</Form.Label>
+                              <Form.Label className="headings">Number of Rounds</Form.Label>
                             </Col>
                             <Col md={3}>
                               <Form.Control type="number" value={rounds} onChange={(e) => setRounds(e.target.value)} />
@@ -713,7 +711,7 @@ const ClassDisplayScreen = () => {
                         <Form.Group controlId="timeOn" className="d-flex align-items-center mt-3">
                           <Row>
                             <Col md={6}>
-                              <Form.Label>Time On (MM:SS)</Form.Label>
+                              <Form.Label className="headings">Time On (MM:SS)</Form.Label>
                             </Col>
                             <Col md={6}>
                               <Row>
@@ -731,7 +729,7 @@ const ClassDisplayScreen = () => {
                         <Form.Group controlId="timeOff" className="d-flex align-items-center mt-3">
                           <Row>
                             <Col md={6}>
-                              <Form.Label>Time Off (MM:SS)</Form.Label>
+                              <Form.Label className="headings">Time Off (MM:SS)</Form.Label>
                             </Col>
                             <Col md={6}>
                               <Row>
@@ -749,7 +747,7 @@ const ClassDisplayScreen = () => {
                         <Form.Group controlId="prepTime" className="d-flex align-items-center mt-3">
                           <Row>
                             <Col md={6}>
-                              <Form.Label>Prep Time (MM:SS)</Form.Label>
+                              <Form.Label className="headings">Prep Time (MM:SS)</Form.Label>
                             </Col>
                             <Col md={6}>
                               <Row>
@@ -784,16 +782,16 @@ const ClassDisplayScreen = () => {
 
                         <Form.Group controlId="countDirectionCustom" className="d-flex align-items-center mt-3">
                           <div className="d-flex align-items-center">
-                            <p  style={{ marginLeft: "80px"}} className='mt-3'><span>Count Up  </span></p>
+                            <p  style={{ marginLeft: "80px"}} className='mt-3 headings'><span>Count Up  </span></p>
                             <Form.Check style={{ marginLeft: "178px"}} type="switch" checked={countDirectionCustom} onChange={(e) => setCountDirectionCustom(e.target.checked)} />
-                            <p className='mt-3' style={{ marginLeft: "80px"}}><span>   Count Down</span></p>
+                            <p className='mt-3 headings' style={{ marginLeft: "80px"}}><span>   Count Down</span></p>
                           </div>
                         </Form.Group>
 
                         <Form.Group controlId="includeLastReset" className="d-flex align-items-center mt-3">
                           <Row>
                             <Col md={11}>
-                              <Form.Label className="mx-5">Include Last Rest</Form.Label>
+                              <Form.Label className="mx-5 headings">Include Last Rest</Form.Label>
                             </Col>
                             <Col md={1}>
                               <Form.Check className="mx-3" type="switch" checked={includeLastReset} onChange={(e) => setIncludeLastReset(e.target.checked)} />
@@ -801,7 +799,7 @@ const ClassDisplayScreen = () => {
                           </Row>
                         </Form.Group>
 
-                        <Button variant="primary" onClick={calculateTotalWorkoutTime} className="ml-auto mt-4">Start</Button>
+                        <Button onClick={calculateTotalWorkoutTime} className="ml-auto mt-4 buttons">Start</Button>
                       </Form>
                     </Col>
                   </Row>
@@ -809,7 +807,7 @@ const ClassDisplayScreen = () => {
                 {customStart && !timerExpanded && (
                   <Row className="align-items-center">
                   <Col md={1}>
-                    <Button variant="success" onClick={isRunning ? handlePause : handleResume}>
+                    <Button onClick={isRunning ? handlePause : handleResume} className='buttons'>
                       {isRunning ? <FontAwesomeIcon icon={faPause} /> : <FontAwesomeIcon icon={faPlay} />}
                     </Button>
                   </Col>
