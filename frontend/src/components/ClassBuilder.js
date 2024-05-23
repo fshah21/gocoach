@@ -117,7 +117,7 @@ const ClassBuilder = () => {
     console.log('Duration:', duration);
     // Perform additional actions, e.g., save data
 
-    const response = await axios.post("http://localhost:5000/gocoachbackend/us-central1/backend/classes/createClass", {
+    const response = await axios.post("https://us-central1-gocoachbackend.cloudfunctions.net/api/api/classes/createClass", {
       user_id: userId,
       class_name: name,
       class_duration: duration,
@@ -223,7 +223,7 @@ const ClassBuilder = () => {
 
     console.log("OBJECT OBJ", obj);
 
-    const response = await axios.post("http://localhost:5000/gocoachbackend/us-central1/backend/classes/addSection/" + classId, obj);
+    const response = await axios.post("https://us-central1-gocoachbackend.cloudfunctions.net/api/api/classes/addSection/" + classId, obj);
 
     console.log("RESPONSE DATA FOR SECTION", response.data);
 
@@ -237,7 +237,7 @@ const ClassBuilder = () => {
   const handleGetSections = async (classId) => {
     console.log('Get sections');
 
-    const response = await axios.get("http://localhost:5000/gocoachbackend/us-central1/backend/users/" + userId + "/classes/getAllSectionsInClass/" + classId);
+    const response = await axios.get("https://us-central1-gocoachbackend.cloudfunctions.net/api/api/users/" + userId + "/classes/getAllSectionsInClass/" + classId);
 
     console.log("RESPONSE DATA FOR GET SECTION", response.data);
     setSections(response.data);
@@ -262,7 +262,7 @@ const ClassBuilder = () => {
 
     try {
       const response = await axios.put(
-        `http://localhost:5000/gocoachbackend/us-central1/backend/sections/editSection/${sectionToDelete.id}`,
+        `https://us-central1-gocoachbackend.cloudfunctions.net/api/api/sections/editSection/${sectionToDelete.id}`,
         {
           user_id: userId,
           class_id: classId,
@@ -290,7 +290,7 @@ const ClassBuilder = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:5000/gocoachbackend/us-central1/backend/sections/deleteSection/${sectionToDelete.id}`,
+        `https://us-central1-gocoachbackend.cloudfunctions.net/api/api/sections/deleteSection/${sectionToDelete.id}`,
         {
           user_id: userId,
           class_id: classId,

@@ -106,7 +106,7 @@ const ClassDisplayScreen = () => {
         setClassDuration(duration);
   
         // Fetch sections for the class
-        const sectionsResponse = await axios.get(`http://localhost:5000/gocoachbackend/us-central1/backend/users/${userId}/classes/getAllSectionsInClass/${id}`);
+        const sectionsResponse = await axios.get(`https://us-central1-gocoachbackend.cloudfunctions.net/api/api/users/${userId}/classes/getAllSectionsInClass/${id}`);
         
         // Extract section names and order them by startTime
         const sortedSectionNames = sectionsResponse.data
@@ -337,7 +337,7 @@ const ClassDisplayScreen = () => {
   const handleCloseRatingModal = async () => {
     setShowRatingModal(false);
 
-    await axios.post(`http://localhost:5000/gocoachbackend/us-central1/backend/classes/saveRating/${classId}`, {
+    await axios.post(`https://us-central1-gocoachbackend.cloudfunctions.net/api/api/classes/saveRating/${classId}`, {
       user_id: userId,
       rating: rating
     });

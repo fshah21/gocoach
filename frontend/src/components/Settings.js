@@ -18,7 +18,7 @@ const Settings = () => {
   const getPaymentMethod = async () => {
     try {
       console.log("GET PAYMENT METHOD");
-      const response = await axios.get(`http://localhost:5000/gocoachbackend/us-central1/backend/users/${userId}/getPaymentMethod`);
+      const response = await axios.get(`https://us-central1-gocoachbackend.cloudfunctions.net/api/api/users/${userId}/getPaymentMethod`);
       const paymentMethodData = response.data.paymentMethodData.card_number;
       const blurredCardNumber = paymentMethodData.substring(0, 15).replace(/\d/g, '*') + paymentMethodData.substring(15);
       setPaymentMethod(blurredCardNumber); // Set payment method in state
@@ -36,7 +36,7 @@ const Settings = () => {
     console.log("CARD DETIALS IN HANDLE ADD CARD");
     console.log(cardDetails);
 
-    const response = await axios.post(`http://localhost:5000/gocoachbackend/us-central1/backend/users/${userId}/addPaymentMethod`, {
+    const response = await axios.post(`https://us-central1-gocoachbackend.cloudfunctions.net/api/api/users/${userId}/addPaymentMethod`, {
       card_number: cardDetails.cardNumber,
       expiry_date: cardDetails.expiryDate,
       cvv: cardDetails.cvv,

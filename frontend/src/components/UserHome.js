@@ -24,23 +24,23 @@ const UserHome = () => {
   useEffect(() => {
     const fetchClassAndSections = async () => {
       try {
-        const classResponse = await axios.get('http://localhost:5000/gocoachbackend/us-central1/backend/classes/'+ userId + '/getClassForToday');
+        const classResponse = await axios.get('https://us-central1-gocoachbackend.cloudfunctions.net/api/api/classes/'+ userId + '/getClassForToday');
         setClassInfo(classResponse.data);
 
         // Fetch sections for the class
         if(classResponse.data[0] !== undefined) {
           const classId = classResponse.data[0].id;
-          const sectionsResponse = await axios.get('http://localhost:5000/gocoachbackend/us-central1/backend/users/'+ userId + '/classes/getAllSectionsInClass/' + classId);
+          const sectionsResponse = await axios.get('https://us-central1-gocoachbackend.cloudfunctions.net/api/api/users/'+ userId + '/classes/getAllSectionsInClass/' + classId);
           setSections(sectionsResponse.data);  
         }
         
-        const pastClassesResponse = await axios.get(`http://localhost:5000/gocoachbackend/us-central1/backend/classes/${userId}/getPastClasses`);
+        const pastClassesResponse = await axios.get(`https://us-central1-gocoachbackend.cloudfunctions.net/api/api/classes/${userId}/getPastClasses`);
         setPastClasses(pastClassesResponse.data.slice(0, 2));
         const classIds = pastClassesResponse.data.map(pastClass => pastClass.id);
         setPastClassIds(classIds.slice(0, 2));
 
         const pastSectionsPromises = classIds.map(async classId => {
-          const sectionsResponse = await axios.get(`http://localhost:5000/gocoachbackend/us-central1/backend/users/${userId}/classes/getAllSectionsInClass/${classId}`);
+          const sectionsResponse = await axios.get(`https://us-central1-gocoachbackend.cloudfunctions.net/api/api/users/${userId}/classes/getAllSectionsInClass/${classId}`);
           return sectionsResponse.data;
         });
 
@@ -48,7 +48,7 @@ const UserHome = () => {
         setPastSections(resolvedPastSections);
 
         const ratingsInfo = classIds.map(async classId => {
-          const classInfoResponse = await axios.post(`http://localhost:5000/gocoachbackend/us-central1/backend/classes/${classId}/getClassRating`, {
+          const classInfoResponse = await axios.post(`https://us-central1-gocoachbackend.cloudfunctions.net/api/api/classes/${classId}/getClassRating`, {
             user_id: userId
           }
           );

@@ -15,7 +15,7 @@ const Library = () => {
   const handleGetClasses = async () => {
     console.log('Get classes');
 
-    const response = await axios.get("http://localhost:5000/gocoachbackend/us-central1/backend/classes/" + userId);
+    const response = await axios.get("https://us-central1-gocoachbackend.cloudfunctions.net/api/api/classes/" + userId);
 
     console.log("RESPONSE DATA FOR GET CLASS", response.data);
     setClasses(response.data);
@@ -34,7 +34,7 @@ const Library = () => {
     console.log(classObj);
 
     try {
-      const response = await axios.get("http://localhost:5000/gocoachbackend/us-central1/backend/users/" + userId + "/classes/getAllSectionsInClass/" + classObj.id);
+      const response = await axios.get("https://us-central1-gocoachbackend.cloudfunctions.net/api/api/users/" + userId + "/classes/getAllSectionsInClass/" + classObj.id);
   
       console.log("RESPONSE DATA FOR GET SECTION", response.data);
       setSections(response.data);

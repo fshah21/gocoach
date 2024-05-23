@@ -25,7 +25,7 @@ const Login = () => {
 
         try {
           // Make a POST request to your API endpoint
-          const response = await axios.post('http://localhost:5000/gocoachbackend/us-central1/backend/users/login', {
+          const response = await axios.post('https://us-central1-gocoachbackend.cloudfunctions.net/api/api/users/login', {
             email,
             password,
           });
