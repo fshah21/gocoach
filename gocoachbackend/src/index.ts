@@ -5,9 +5,20 @@ import * as userController from './controllers/usercontroller';
 import { ClassController } from './controllers/classcontroller';
 import cors from "cors";
 import { json } from "body-parser";
+import * as dotenv from 'dotenv';
 
-// Initialize Firebase Admin SDK
-admin.initializeApp();
+dotenv.config();
+
+const serviceAccountKey = process.env.GOOGLE_CLOUD_SERVICE_ACCOUNT_KEY;
+
+if (!serviceAccountKey) {
+  throw new Error('Missing GOOGLE_CLOUD_SERVICE_ACCOUNT_KEY environment variable');
+}
+
+const serviceAccount = JSON.parse(serviceAccountKey);
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount as admin.ServiceAccount)
+});
 
 // Create Express app
 const app = express();

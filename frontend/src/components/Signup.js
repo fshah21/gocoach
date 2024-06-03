@@ -3,14 +3,15 @@ import { Container, Row, Col, Card, Button, Form } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import DefaultNavbar from './DefaultNavbar';
-import { useUserContext } from './UserContext';
+import { useDispatch } from 'react-redux';
+import { setUserId, setUserName } from './actions';
 
 const Signup = () => {
     const navigate = useNavigate();
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { updateUser } = useUserContext();
+    const dispatch = useDispatch();
 
     const handleSignup = async () => {
         // Handle signup logic here
@@ -25,14 +26,15 @@ const Signup = () => {
 
         try {
           // Make a POST request to your API endpoint
-          const response = await axios.post('https://us-central1-gocoachbackend.cloudfunctions.net/api/api/users/signup', {
-            username,
-            email,
-            password,
+          const response = await axios.post('http://127.0.0.1:5001/gocoachbackend/us-central1/api/api/users/signup', {
+            displayName: username,
+            email: email,
+            password: password
           });
 
           console.log('Signup successful:', response.data);    
-          updateUser(response.data.user_id);    
+          dispatch(setUserId(response.data.user_id));
+          dispatch(setUserName(response.data.user_name));
           // For demonstration purposes, you can clear the form fields
           setUsername('');
           setEmail('');
